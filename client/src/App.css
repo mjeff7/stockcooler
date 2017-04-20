@@ -26,3 +26,21 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.workspace {
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  position: relative;
+}
+
+.toastsPanel {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+
+  background: grey;
+  opacity: 0.8;
+}
