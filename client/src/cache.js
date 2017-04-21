@@ -11,7 +11,7 @@ export type CacheProvider<K, V> = {
 
 export const memoryCache : () => CacheProvider<*, *> = () => new Map();
 
-export const fileCache : string => CacheProvider<*, *> =
+export const fileCache : string => CacheProvider<string, mixed> =
   (directory : string) => {
     const pathTo = (name : string) => path.join(directory, name);
 
@@ -24,10 +24,12 @@ export const fileCache : string => CacheProvider<*, *> =
     };
   };
 
-export const localStorageCache : string => CacheProvider<*, *> =
+export const localStorageCache : string => CacheProvider<string, mixed> =
   (nameSpace : string = '') => {
     const pathTo = (name : string) => nameSpace + name;
-    const localStorage = window.localStorage;
+    const localStorage : { getItem: string => string,
+                           setItem: (string, string) => void }
+                       = window.localStorage;
 
     return {
       has: name => localStorage.getItem(pathTo(name)) !== null,
