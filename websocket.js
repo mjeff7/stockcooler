@@ -1,5 +1,23 @@
 const WebSocket = require('ws');
 
+
+// Webpack dev server uses websockets and interferes with the messages.
+const wpWorkaround = (client, msg) => {
+  const parsed = JSON.parse(msg);
+
+  if(!parsed.type) return;
+  if(parsed.serverSaw) return;
+
+  client.send(
+    JSON.stringify(
+      Object.assign({}, parsed, {serverSaw: true})
+    )
+  );
+};
+
+
+
+
 module.exports = server => {
   const clients = new Set();
 
@@ -7,12 +25,11 @@ module.exports = server => {
 
   wss.on('connection', ws => {
     clients.add(ws);
-    ws.send("Hello");
 
     const broadcast = msg => clients.forEach(
       client => client !== ws &&
                 client.readyState === WebSocket.OPEN &&
-                client.send(msg)
+                wpWorkaround(client, msg) //client.send(msg)
     );
 
     ws.on('close', e => console.log("Closed", {e}));
@@ -20,7 +37,7 @@ module.exports = server => {
 
     ws.on('error', e => console.log("Error", {e}));
 
-    ws.on('message', e => console.log("message", JSON.stringify({e}, null, 2)));
+    ws.on('message', e => console.log("message", {e}));
     ws.on('message', broadcast);
   });
 };
