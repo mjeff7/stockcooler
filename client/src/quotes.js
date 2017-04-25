@@ -40,6 +40,7 @@ try {
   catch(e) { if(e.code !== 'EEXIST') throw e; };
   historyCache = fileCache(MOCK_DIR);
 }
+historyCache = new Map();
 
 export const getQuoteHistoryNow : string => Maybe = symbol =>
   historyCache.has(symbol) ? Maybe.Just(historyCache.get(symbol))
