@@ -15,6 +15,7 @@
 }
 
 .spin {
+  display: inline-block;
   animation: App-logo-spin infinite 1s linear;
 }
 
