@@ -3,7 +3,17 @@ const WebSocket = require('ws');
 
 // Webpack dev server uses websockets and interferes with the messages.
 const wpWorkaround = (client, msg) => {
-  const parsed = JSON.parse(msg);
+  let parsed;
+
+  try {
+    parsed = JSON.parse(msg);
+  }
+  catch(e) {
+    console.error("Kludge parse error for message: ", msg);
+    console.error("Kludge parse error: ", e);
+    return;
+  }
+
 
   if(!parsed.type) return;
   if(parsed.serverSaw) return;
