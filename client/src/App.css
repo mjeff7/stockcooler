@@ -14,6 +14,14 @@
   to { transform: rotate(360deg); }
 }
 
+.spin {
+  animation: App-logo-spin infinite 1s linear;
+}
+
+.close {
+  margin: 0 5px;
+}
+
 .workspace {
   text-align: left;
   display: flex;
@@ -102,6 +110,45 @@
   line-height: 1;
 
   opacity: 0.2;
+}
+
+.symbolTag, .symbolTag.example-leave, .symbolTag.example-enter.example-enter-active {
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px 0;
+
+  text-align: center;
+}
+
+.comment, .comment.example-leave, .comment.example-enter.example-enter-active {
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px 0;
+}
+
+.toast, .toast.example-leave, .toast.example-enter.example-enter-active {
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px 0;
+}
+
+.example-enter, .example-leave.example-leave-active {
+  overflow: hidden;
+  opacity: 0;
+  max-height: 0px;
+  padding: 0;
+  margin: 0;
+  border-width: 0px;
+}
+
+.example-leave, .example-enter.example-enter-active {
+  opacity: 1;
+  max-height: 200px;
+  border-width: 1px;
+  transition: 1s;
 }
 
 @media (min-width: 700px) {
