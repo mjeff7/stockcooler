@@ -50,6 +50,7 @@
     "ramda-fantasy": "^0.8.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
+    "react-measure": "^1.4.7",
     "react-stockcharts": "^0.6.1"
   },
   "scripts": {
