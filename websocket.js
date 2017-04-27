@@ -1,4 +1,4 @@
-const WebSocket = require('ws');
+import WebSocket from 'ws';
 
 
 // Webpack dev server uses websockets and interferes with the messages.
