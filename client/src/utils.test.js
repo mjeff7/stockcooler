@@ -1,5 +1,8 @@
-import { Future, Futureall } from './prelude';
-import { F2P, P2F, futurize, sideEffect } from './utils';
+import { Future } from './prelude';
+import {
+  F2P, P2F, futurize,
+  Futureall, Futurefold, sideEffect
+} from './utils';
 
 
 describe('sideEffects', () => {
@@ -108,5 +111,57 @@ describe('Futureall', () => {
     });
     Futureall([b(true)]).fork(x=>x, x=>x);
     Futureall([b(false)]);
+  });
+});
+
+describe('Futurefold', () => {
+  it('should resolve to final accumulator', () => {
+    const PAYLOAD = [1,2,3];
+    return F2P(
+      Futurefold((sum, i, v) => sum+1, 0, PAYLOAD.map(i => Future.of(i)) )
+    )
+    .then(r => expect(r).toEqual(PAYLOAD.length));
+  });
+  it('should reject when any single future rejects', () => {
+    const PAYLOAD = [1,2,3];
+    return F2P(
+      Futurefold(
+        () => null, null,
+        PAYLOAD.map(i => i === 2 ? Future.reject(i) : Future.of(i))
+      )
+    )
+    .then(r => 'resolved', r => 'rejected')
+    .then(r => expect(r).toBe('rejected'));
+  });
+  it('should not run unless forked', () => {
+    expect.assertions(1);
+    const b = shouldRun => Future((rej, res) => {
+      expect(shouldRun).toBe(true);
+      res(true);
+    });
+    Futurefold(() => null, null, [b(true)]).fork(x=>x, x=>x);
+    Futurefold(() => null, null, [b(false)]);
+  });
+  it('should invoke accumulator in order of resolution', () => {
+    const unordered = [3, 1, 2];
+    const resolvers = [];
+    // The following futures will resolve to values in increasing order.
+    const futures = unordered.slice().sort().map(i =>
+      Future((rej, res) => resolvers[i] = () => res(i))
+    );
+    const foldedFuture = F2P(
+      Futurefold(
+        (a, i, v) => a.concat([v]), [],
+        futures
+      )
+    )
+    .catch(error => { throw {msg: "Test got an error", error}; })
+    .then(result => expect(result).toEqual(unordered));
+
+    // Resolve the futures in non-ascending order to ensure they are handled
+    // that way.
+    unordered.forEach(i => resolvers[i]());
+
+    return foldedFuture;
   });
 });

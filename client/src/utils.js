@@ -37,3 +37,32 @@ export const Futureall = (fs: Array<Future>) : Future => {
     fs.forEach((f, i) => f.fork(childReject, childResolve(i)))
   });
 };
+
+export const Futurefold =
+(
+  accF: (any, number, any) => any,
+  initial: any,
+  fs: Array<Future>
+): Future => {
+  let futuresRemaining = fs.length;
+  if(futuresRemaining === 0)
+    return Future.of([]);
+
+  let acc = initial;
+  let results = fs.map(() => undefined);
+
+  return Future((rej, res) => {
+    const childReject = once(rej);
+    const childResolve = i => result => {
+      results[i] = result;
+      futuresRemaining--;
+
+      acc = accF(acc, i, result);
+
+      if(futuresRemaining === 0)
+        res(acc);
+    };
+
+    fs.forEach((f, i) => f.fork(childReject, childResolve(i)))
+  });
+};
