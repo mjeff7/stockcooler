@@ -1,4 +1,5 @@
 import WebSocket from 'ws';
+import stateReducer from './client/src/reducer';
 
 
 // Webpack dev server uses websockets and interferes with the messages.
@@ -26,12 +27,36 @@ const wpWorkaround = (client, msg) => {
 };
 
 
+class StateWatcher {
+  constructor(reducer) {
+    this.reducer = reducer;
+    this.state = reducer(undefined, {type: ''});
+  }
+
+  send(msg) {
+    this.state = this.reducer(this.state, JSON.parse(msg));
+
+    console.log("New state: ", this.state);
+  }
+
+  getState() {
+    return this.state;
+  }
+}
 
 
 module.exports = server => {
   const clients = new Set();
-
   const wss = new WebSocket.Server({server});
+  const state = new StateWatcher(stateReducer);
+
+  state.readyState = WebSocket.OPEN;
+  const setStateEvent = () => JSON.stringify({
+    type: 'SET_INITIAL_STATE',
+    payload: state.getState()
+  });
+
+  clients.add(state);
 
   wss.on('connection', ws => {
     clients.add(ws);
@@ -49,5 +74,7 @@ module.exports = server => {
 
     ws.on('message', e => console.log("message", {e}));
     ws.on('message', broadcast);
+
+    ws.send(setStateEvent());
   });
 };
