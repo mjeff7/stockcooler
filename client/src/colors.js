@@ -20,27 +20,10 @@ const dispersedSequence_ = n => {
 
 const dispersedSequence = n => {
   if(n < 1)
-    throw `Nothing to disperse! n = ${n}`;
+    throw new Error(`Nothing to disperse! n = ${n}`);
 
   return dispersedSequence_(n);
 };
-
-// Like dispersedSequence but works in powers of 2 only.
-// dispersedSequenceDepth(d) === dispersedSequence(2^n),
-// at least it should.
-const dispersedSequenceDepth = d => {
-  if(d < 1) return [];
-
-  let acc = [0],
-      step = 1;
-
-  for(; d > 0; d--) {
-    acc = [].concat(...acc.map(i => [i, i+step]));
-    step *= 2;
-  }
-
-  return acc;
-}
 
 const seq360 = dispersedSequence(360),
       // Clip the 100 sequence to 25 to 75 and start in the middle.
