@@ -32,7 +32,7 @@ const ChartInner =
       ratio={1}
       width={width}
       height={height}
-      margin={{left: 70, right: 70, top: 20, bottom: 30}}
+      margin={{left: 70, right: 120, top: 20, bottom: 30}}
       type="svg"
       data={data}
       seriesName="SPX?"
@@ -60,6 +60,8 @@ const ChartInner =
                            orient='right'
                            edgeAt='right'
                            yAccessor={path([s, VALUETOPLOT])}
+                           displayFormat={d => `${d} ${s}`}
+                           rectWidth={100}
                            fill={colors[s]}/>,
              ]
       )}
