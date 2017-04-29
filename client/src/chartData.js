@@ -1,48 +1,86 @@
-import { Futureall,
-         compose,
-         concat,
-         difference,
-         groupBy,
-         map,
-         mapObjIndexed,
-         mergeAll,
-         pipe,
-         prop,
-         reduce,
-         sortBy,
-         uniq,
-         values,
-         zipObj
+import { difference,
        } from './prelude';
+import { Futurefold } from './utils';
 import { getQuoteHistory } from './quotes';
 
 
-const datesIntsToDates = (x:{Date: number}) =>
-  Object.assign({}, x, {Date: new Date(x.Date)});
+const sortByDates = (a, b) => a.Date - b.Date;
 
-const datesOut_ =
-  mapObjIndexed(
-    (val, key) => val.map(
-      ({Date, ...rest}) => ({Date: Date, [key]: rest})
+
+export const newDataManager = () => {
+  // Example data:
+  // [ { Date: Date(Jan ...), AAPL: { Close: 12, Open: 10, ...},
+  //                          GOOG: { Close: 15, Open: 10, ...}, ... },
+  //   { Date: Date(Feb ...), AAPL: { Close: 23, Open: 10, ...},
+  //                          GOOG: { Close: 33, Open: 10, ...}, ... },
+  //   ...
+  // ]
+  const data = [];
+  // Example dataIndex:
+  // { Date(Jan ...): { Date: Date(Jan ...), AAPL: ... (an object in data) },
+  //   Date(Feb ...): { Date: Date(Feb ...), AAPL: ... (an object in data) },
+  //   ...
+  // }
+  //  
+  // This allows data to be updated quickly. dataIndex is represented as above,
+  // except as a Map.
+  const dataIndex = new Map();
+
+  // Lists the symbols we have incorporated into the store.
+  const symbols = new Set();
+
+  const getData = () => data;
+  const getSymbols = () => Array.from(symbols);
+
+  const incorporateSymbol = (symbol, symbolData) => {
+    // symbolData looks similar to data:
+    // [ { Date: Date(Jan ...), Close: 12, Open: 10, ... },
+    //   { Date: ... },
+    //   ...
+    // ]
+    //
+    // This is to be mixed into the appropriate row in data.
+    
+    let newDates = false;
+
+    symbolData.forEach(({ Date, ...rest }) => {
+      const addendum = {[symbol]: rest};
+
+      if(dataIndex.has(Date.getTime())) {
+        Object.assign(dataIndex.get(Date.getTime()), addendum);
+      } else {
+        newDates = true;
+
+        const newDatum = Object.assign({Date}, addendum);
+        data.push(newDatum);
+        dataIndex.set(Date.getTime(), newDatum);
+      }
+    });
+
+    if(newDates)
+      data.sort(sortByDates);
+
+    symbols.add(symbol);
+
+    return data;
+  };
+
+  const incorporateSymbols = (newSymbols, callback = () => null) => {
+    const symbolsToProcess = difference(newSymbols, Array.from(symbols));
+    return Futurefold(
+      (_1, i, data) => {
+        incorporateSymbol(symbolsToProcess[i], data);
+        callback(getSymbols());
+      },
+      null,
+      symbolsToProcess.map(getQuoteHistory)
     )
-  );
+    //.map(sideEffect(result => console.log("Here with result: ", {result})))
+    .map(getSymbols);
+  };
 
-const mergeDataSets : ({ [string]: Array<{Date: mixed}> }) => ChartableData =
-  pipe(
-    map(x => x.filter(i => Object.keys(i).length > 1)),
-    datesOut_,
-    values,
-    reduce(concat, []),
-    groupBy(prop('Date')),
-    values,
-    map(mergeAll),
-    sortBy(prop('Date')),
-    map(datesIntsToDates)
-  );
-
-export const gatherDataForSymbols = symbols =>
-   Futureall(symbols.map(getQuoteHistory))
-  .map(zipObj(symbols))
-  .map(mergeDataSets);
-
-
+  return {
+    getData,
+    incorporateSymbols
+  };
+};
