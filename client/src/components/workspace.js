@@ -5,6 +5,7 @@ import { Futureall,
          compose,
          concat,
          groupBy,
+         intersection,
          map,
          mapObjIndexed,
          memoize,
@@ -18,7 +19,7 @@ import { Futureall,
        } from '../prelude';
 import { getQuoteHistory } from '../quotes';
 import stateReducer from '../reducer';
-import { gatherDataForSymbols } from '../chartData';
+import { newDataManager } from '../chartData';
 
 import type { ChartableData, Color } from '../types';
 
@@ -111,6 +112,9 @@ class DataPrep extends React.Component {
             preparedSymbols: []
           };
 
+  dataManager = newDataManager();
+  desiredSymbols = [];
+
   componentDidMount() {
     this.componentWillReceiveProps(this.props);
   }
@@ -119,12 +123,22 @@ class DataPrep extends React.Component {
     this.useSymbols(props.store.symbols);
   }
 
+  updateSymbols = readySymbols => this.setState({
+    preparedSymbols: intersection(readySymbols, this.desiredSymbols)
+  });
+
   useSymbols(symbols : Array<string>) {
-    gatherDataForSymbols(symbols)
-    .fork(
-      this.handleRetrievalError,
-      this.handleRetrievalSuccess(symbols)
-    );
+    // Store this now so the most recent call will set the result,
+    // regardless of the order in which the retrieval settles.
+    // Only run if the list has changed.
+    if(this.desiredSymbols !== symbols) {
+      this.desiredSymbols = symbols;
+      this.dataManager.incorporateSymbols(symbols, this.updateSymbols)
+      .fork(
+        this.handleRetrievalError,
+        this.updateSymbols
+      );
+    }
   }
 
   handleRetrievalError = (error: {symbol: ?string}) => {
@@ -137,19 +151,11 @@ class DataPrep extends React.Component {
       this.props.dispatch(removeSymbol(symbol));
   }
 
-  handleRetrievalSuccess =
-    (symbols: Array<string>) =>
-    (preparedData: ChartableData) => {
-    this.setState({preparedData,
-                   preparedSymbols: symbols
-                  });
-  }
-
   handlerOf = action => compose(this.props.dispatch, action);
 
   render() {
     return <div className="workspace">
-      <Chart data={this.state.preparedData}
+      <Chart data={this.dataManager.getData()}
              symbols={this.state.preparedSymbols}
              colors={this.props.store.colors}/>
       <InputPanel addSymbol={this.handlerOf(addSymbol)}
