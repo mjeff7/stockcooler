@@ -1,38 +1,27 @@
 // @flow
 
 import React from 'react';
-import { Futureall,
-         compose,
-         concat,
-         groupBy,
+import { compose,
          intersection,
-         map,
-         mapObjIndexed,
-         memoize,
-         mergeAll,
-         pipe,
-         prop,
-         reduce,
-         sortBy,
-         values,
-         zipObj
        } from '../prelude';
-import { getQuoteHistory } from '../quotes';
 import stateReducer from '../reducer';
 import { newDataManager } from '../chartData';
 
-import type { ChartableData, Color } from '../types';
+import type { ChartableData } from '../types';
 
 import Resizer from './resizer';
 import GuardedChart from './chart';
 import InputPanel from './inputPanel';
 import { CommentsPanel } from './comment';
+import { ToastsPanel } from './toasts';
 
 import {
   addSymbol,
   removeSymbol,
   addComment,
-  removeCommentById
+  removeCommentById,
+  addToast,
+  removeToastById
 } from '../events';
 import type { Event } from '../events';
 
@@ -147,6 +136,10 @@ class DataPrep extends React.Component {
                    symbol,
                    error
                   });
+    this.props.dispatch(addToast(
+      `Oops...I couldn't fetch data for ${symbol}`
+    ));
+
     if(symbol)
       this.props.dispatch(removeSymbol(symbol));
   }
@@ -166,6 +159,8 @@ class DataPrep extends React.Component {
       <CommentsPanel comments={this.props.store.comments}
                      addComment={this.handlerOf(addComment)}
                      removeComment={this.handlerOf(removeCommentById)}/>
+      <ToastsPanel toasts={this.props.store.toasts}
+                   removeToast={this.handlerOf(removeToastById)}/>
     </div>;
   }
 };
