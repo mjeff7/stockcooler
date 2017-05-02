@@ -47,10 +47,15 @@ const getHistory = symbol =>
     .then(sideEffect(d => historyCache.set(symbol, d)))
     .catch(error => {
       console.error({error});
-      return JSON.stringify(error);
+      return Promise.reject(error);
     });
 
 
 module.exports = (req: {query: {q: string}},
                   res: {end: * => void}) =>
-  getHistory(req.query.q).then(x => res.end(x));
+  getHistory(req.query.q)
+  .catch(error => {
+    res.status(error.response.status);
+    return JSON.stringify(error);
+  })
+  .then(x => res.end(x));
