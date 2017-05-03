@@ -31,65 +31,68 @@ import type { Event } from '../events';
 const Chart = Resizer(GuardedChart);
 
 
-const WebSocketWrapper = addr => Base => class extends React.Component {
-  constructor() {
-    super();
+const webSocketHub = addr => {
+  const subscribers = new Set();
+  const ws = new WebSocket(addr);
 
-    this.subscribers = new Set();
-
-    this.ws = new WebSocket(addr);
-    this.ws.addEventListener('message',
-      msg => this.emitLocal(JSON.parse(msg.data)));
-  }
-
-  subscribe = subscriber => {
-    this.subscribers.add(subscriber);
-    return () => this.subscribers.remove(subscriber);
+  const subscribe = subscriber => {
+    subscribers.add(subscriber);
+    return () => subscribers.remove(subscriber);
   };
 
-  emitLocal = message => this.subscribers.forEach(s => s(message));
-  emitAll = message => {
-    this.emitLocal(message);
-    if(this.ws.readyState === WebSocket.OPEN)
-      this.ws.send(JSON.stringify(message));
+  const emitLocal = message => subscribers.forEach(s => s(message));
+  const emit = message => {
+    emitLocal(message);
+    if(ws.readyState === WebSocket.OPEN)
+      ws.send(JSON.stringify(message));
   };
 
-  render() {
-    return <Base
-      {...this.props}
-      subscribe={this.subscribe}
-      emit={this.emitAll}
-    />;
-  }
+  ws.addEventListener('message',
+    msg => emitLocal(JSON.parse(msg.data))
+  );
+
+  return {
+    subscribe,
+    emit
+  };
 };
 
-const Store = stateReducer => Base => class extends React.Component {
-  state: mixed;
+const storeMaker = stateReducer => {
+  let state = stateReducer(undefined, {type: 'INITIAL_STATE'});
 
-  state = stateReducer(undefined, {type: 'INITIAL_STATE'});
+  const dispatch = (e: Event) =>
+    state = stateReducer(state, e);
 
-  componentDidMount() {
-    this.props.subscribe(this.handleEventSelf);
-    const symbols = this.props.initialSymbols || [];
+  const getState = () => state;
 
-    this.setState(
-      symbols.reduce(
-        (state, symbol) => stateReducer(state, addSymbol(symbol)),
-        this.state
-      )
-    );
-  }
+  return {
+    dispatch,
+    getState
+  };
+};
 
-  handleEventSelf = (e: Event) => {
-    this.setState(stateReducer(this.state, e));
-  }
+const ConnectedStore = (stateReducer, addr) => Base =>
+  class extends React.Component {
+    store = storeMaker(stateReducer);
+    hub = webSocketHub(addr);
+    state = { store: this.store.getState() };
 
-  emitEvent = (e: Event) => this.props.emit(e);
+    constructor() {
+      super();
+      this.hub.subscribe(this.handleEventSelf);
+    }
 
-  render() {
-    return <Base store={this.state}
-                 dispatch={this.emitEvent}/>;
-  }
+    handleEventSelf = e => {
+      this.store.dispatch(e);
+      this.setState({store: this.store.getState()});
+    };
+
+    render() {
+      return <Base {...this.props}
+        store={this.state.store}
+        dispatch={this.hub.emit}
+      />;
+    }
 };
 
 class DataPrep extends React.Component {
@@ -166,7 +169,4 @@ class DataPrep extends React.Component {
 };
 
 
-export default compose(
-  WebSocketWrapper('ws://localhost:3000/'),
-  Store(stateReducer)
-)(DataPrep);
+export default ConnectedStore(stateReducer, 'ws://localhost:3000/')(DataPrep);
