@@ -31,7 +31,7 @@ import type { Event } from '../events';
 const Chart = Resizer(GuardedChart);
 
 
-const webSocketHub = addr => {
+const webSocketHub = (addr, errorHandler = () => null) => {
   const subscribers = new Set();
   const ws = new WebSocket(addr);
 
@@ -50,6 +50,15 @@ const webSocketHub = addr => {
   ws.addEventListener('message',
     msg => emitLocal(JSON.parse(msg.data))
   );
+  ws.addEventListener('error', e => {
+    const error = {
+      error: 'WebSocket connect error',
+      originalError: e
+    };
+
+    console.error({error});
+    errorHandler(error);
+  });
 
   return {
     subscribe,
@@ -74,7 +83,9 @@ const storeMaker = stateReducer => {
 const ConnectedStore = (stateReducer, addr) => Base =>
   class extends React.Component {
     store = storeMaker(stateReducer);
-    hub = webSocketHub(addr);
+    hub = webSocketHub(addr, error => this.hub.emit(addToast(
+      `Could not connect to a websocket at ${addr}. No collaboration for you.`
+    )));
     state = { store: this.store.getState() };
 
     constructor() {
