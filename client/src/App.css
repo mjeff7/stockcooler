@@ -106,11 +106,11 @@
 
 @media (min-width: 700px) {
   .resizer {
-    width: 80%;
+    width: calc(100% - 5em);
   }
 
   .inputPanel {
-    width: 20%;
+    width: 5em;
   }
 
   .resizer, .inputPanel {
