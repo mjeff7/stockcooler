@@ -1,8 +1,6 @@
 .App {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: stretch;
+  box-sizing: border-box;
+  padding: 0.5rem;
   height: 100vh;
 }
 
@@ -20,16 +18,107 @@
   text-align: left;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-around;
+  align-items: stretch;
   width: 100%;
+  height: 100%;
   position: relative;
 }
 
-.toastsPanel {
-  position: absolute;
-  right: 0;
-  bottom: 0;
+.resizer, .inputPanel, .commentsPanel {
+  display: inline-block;
+}
 
+.resizer, .inputPanel, .commentsPanel {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.resizer {
+  height: 100vh;
+}
+
+.inputPanel-input, .symbolTag,
+.commentsPanel-input, .comment {
+  width: 100%;
+}
+
+.inputPanel-input, .symbolTag,
+.commentsPanel-input, .comment,
+.toast {
+  box-sizing: border-box;
+  margin: 0.25rem 0;
+
+  border-radius: 0.5rem;
+}
+
+.symbolTag, .comment, .toast,
+.inputPanel-input, .commentsPanel-input {
+  padding: 0.25rem;
+}
+
+.inputPanel-input, .commentsPanel-input, .comment {
+  border: 1px solid lightgrey;
+}
+
+.inputPanel-input, .commentsPanel-input {
+  font-size: inherit;
+}
+
+.inputPanel-input {
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.symbolTag {
+  filter: brightness(300%);
+  text-align: center;
+}
+
+.symbolTag-span {
+  filter: brightness(33%);
+  font-weight: 800;
+}
+
+.toastsPanel {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+
+  z-index: 7;
+}
+
+.toast {
   background: grey;
   opacity: 0.8;
+}
+
+.close {
+  float: right;
+  margin: 0 5px;
+  font-size: 125%;
+  font-weight: bold;
+  line-height: 1;
+
+  opacity: 0.2;
+}
+
+@media (min-width: 700px) {
+  .resizer {
+    width: 80%;
+  }
+
+  .inputPanel {
+    width: 20%;
+  }
+
+  .resizer, .inputPanel {
+    height: 80%;
+  }
+
+  .commentsPanel {
+    height: 20%;
+    overflow: auto;
+  }
 }
