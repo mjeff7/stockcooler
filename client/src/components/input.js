@@ -12,5 +12,8 @@ const submitOnEnter = f => (e: DOMEvent) => {
   }
 };
 
-export const Input = ({onEnter, ...rest}) =>
+export const Input =
+  ({onEnter, ...rest}:
+    {onEnter: string => void}
+  ) =>
   <input {...rest} onKeyPress={submitOnEnter(onEnter)}/>;

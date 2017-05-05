@@ -27,6 +27,8 @@ const ChartInner =
   ({colors, data, height, width, symbols} :
     {data: ChartableData,
      colors: {[string]: Color},
+     height: number,
+     width: number,
      symbols: Array<string>}) =>
   <ChartCanvas
       ratio={1}
@@ -80,6 +82,8 @@ const ChartInner =
 const GuardedChart =
   (props: {data: ChartableData,
            colors: {[string]: Color},
+           height: number,
+           width: number,
            symbols: Array<string>}) =>
     props.data.length > 0
     ? <ChartInner {...props}/>

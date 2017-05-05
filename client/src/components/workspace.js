@@ -30,35 +30,42 @@ import type { Event } from '../events';
 
 const Chart = Resizer(GuardedChart);
 
+type Subscriber = Event => void;
 
 const webSocketHub = (addr, errorHandler = () => null) => {
   const subscribers = new Set();
   const ws = new WebSocket(addr);
 
-  const subscribe = subscriber => {
+  const subscribe = (subscriber: Subscriber) => {
     subscribers.add(subscriber);
-    return () => subscribers.remove(subscriber);
+    return () => subscribers.delete(subscriber);
   };
 
-  const emitLocal = message => subscribers.forEach(s => s(message));
-  const emit = message => {
+  const emitLocal = (message: Event) => subscribers.forEach(s => s(message));
+  const emit = (message: Event) => {
     emitLocal(message);
     if(ws.readyState === WebSocket.OPEN)
       ws.send(JSON.stringify(message));
   };
 
-  ws.addEventListener('message',
-    msg => emitLocal(JSON.parse(msg.data))
-  );
-  ws.addEventListener('error', e => {
-    const error = {
-      error: 'WebSocket connect error',
-      originalError: e
-    };
-
+  const emitError = error => {
     console.error({error});
     errorHandler(error);
-  });
+  };
+
+  ws.addEventListener('message', msg =>
+    typeof msg.data === 'string'
+    ? emitLocal(JSON.parse(msg.data))
+    : emitError({
+        error: 'Received WebSocket message without string data.',
+        message: msg
+    })
+  );
+
+  ws.addEventListener(('error': string), e => emitError({
+    error: 'WebSocket connect error',
+    originalError: e
+  }));
 
   return {
     subscribe,
@@ -95,12 +102,12 @@ const ConnectedStore =
       this.hub.subscribe(this.handleEventSelf);
     }
 
-    handleEventSelf = e => {
+    handleEventSelf = (e: Event) => {
       this.store.dispatch(e);
       this.setState({store: this.store.getState()});
     };
 
-    dispatch = e =>
+    dispatch = (e: Event) =>
       shouldShare(e)
       ? this.hub.emit(e)
       : this.handleEventSelf(e)
@@ -151,14 +158,15 @@ class DataPrep extends React.Component {
     }
   }
 
-  handleRetrievalError = (error: {symbol: ?string}) => {
+  handleRetrievalError = (error: {symbol?: string}) => {
     const symbol = error.symbol;
     console.error({description: 'Failed to fetch data.',
                    symbol,
                    error
                   });
     this.props.dispatch(addToast(
-      `Oops...I couldn't fetch data for ${symbol}`
+      "Oops...I couldn't fetch data" +
+      (symbol ? ` for ${symbol}` : ", and I don't know what symbol it was.")
     ));
 
     if(symbol)
