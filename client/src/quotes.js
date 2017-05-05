@@ -76,7 +76,7 @@ export const getQuoteHistory : string => Future<*, QuoteHistory> = symbol =>
     .map(csvToJSON)
     .map(sortBy(prop('Date')))
     .map(sideEffect(data => historyCache.set(symbol, data)))
-    .chainReject(error => Future.reject({
+    .chainRej(error => Future.reject({
       description: `Cannot load history for symbol ${symbol}`,
       error,
       symbol
