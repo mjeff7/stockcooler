@@ -1,24 +1,16 @@
-export { Maybe
-       } from 'ramda-fantasy';
+export * from './sanctuary';
 export { Future
        } from 'fluture';
-export { compose,
-         concat,
-         difference,
+export { difference,
          groupBy,
          intersection,
-         map,
          mapObjIndexed,
          mergeAll,
          once,
          path,
          pick,
-         pipe,
-         prop,
-         reduce,
          sortBy,
          uniq,
-         values,
          zip,
          zipObj,
          zipWith
