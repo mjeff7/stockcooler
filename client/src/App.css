@@ -81,12 +81,12 @@
 }
 
 .symbolTag {
-  filter: brightness(300%);
   text-align: center;
 }
 
 .symbolTag-span {
-  filter: brightness(33%);
+  color: white;
+  filter: drop-shadow(0 0 1px black);
   font-weight: 800;
 }
 
