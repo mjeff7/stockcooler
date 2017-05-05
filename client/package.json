@@ -53,7 +53,8 @@
     "react-dom": "^15.5.4",
     "react-measure": "^1.4.7",
     "react-stockcharts": "^0.6.1",
-    "react-transition-group": "^1.1.2"
+    "react-transition-group": "^1.1.2",
+    "sanctuary": "^0.12.2"
   },
   "scripts": {
     "start": "node scripts/start.js",
