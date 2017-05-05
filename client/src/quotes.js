@@ -4,10 +4,11 @@
 import fetch from 'node-fetch';
 import * as d3 from 'd3-time-format';
 import {
+  encase,
   Future,
   Just,
   Maybe,
-  maybe,
+  maybe_,
   Nothing,
   prop,
   sortBy,
@@ -81,9 +82,9 @@ const csvToJSON = (blob : string) => {
 };
 
 export const getQuoteHistory : string => Future<*, QuoteHistory> = symbol =>
-  maybe(
-    fetchHistoryFromNetwork(symbol)
-    .map(csvToJSON)
+  maybe_(
+    () => fetchHistoryFromNetwork(symbol)
+    .chain(Future.encase(csvToJSON))
     .map(sortBy(x => x.Date))
     .map(sideEffect(data => historyCache.set(symbol, data)))
     .chainRej(error => Future.reject({
