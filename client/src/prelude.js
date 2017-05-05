@@ -1,6 +1,7 @@
-export { Future,
-         Maybe
+export { Maybe
        } from 'ramda-fantasy';
+export { Future
+       } from 'fluture';
 export { compose,
          concat,
          difference,

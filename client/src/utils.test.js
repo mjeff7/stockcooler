@@ -40,7 +40,7 @@ describe('P2F', () => {
   const PAYLOAD = 'secret payload';
 
   it('should return a future', () => {
-    return P2F(Promise.resolve(null)).fork(x => x, x => x);
+    P2F(Promise.resolve(null)).fork(x => x, x => x);
   });
   it('should resolve to a future resolve', () => {
     return F2P(P2F(Promise.resolve(PAYLOAD)))
@@ -63,7 +63,7 @@ describe('futurize', () => {
   const PAYLOAD = 'secret payload';
 
   it('should return a function returning a future', () => {
-    return futurize(Promise.resolve.bind(Promise))(null).fork(x => x, x => x);
+    futurize(Promise.resolve.bind(Promise))(null).fork(x => x, x => x);
   });
   it('should resolve to a future resolve', () => {
     return F2P(futurize(Promise.resolve.bind(Promise))(PAYLOAD))

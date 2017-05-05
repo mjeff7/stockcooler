@@ -8,14 +8,18 @@ export const sideEffect =
      { f(d); return d; };
 export const P2F =
   (p: Promise<*>) : Future =>
-  Future((rej, res) => p.then(res, rej)
-    .catch(e => console.error("Uncaught here: ", e)));
+  Future((rej, res) => {
+    p.then(res, rej)
+    .catch(e => console.error("Uncaught here: ", e));
+  });
 export const F2P =
   (f: Future) : Promise<*> =>
   new Promise((res, rej) => f.fork(rej, res));
 export const futurize =
   (fp: (mixed => Promise<*>)) =>
-  (...args: Array<*>) => Future((rej, res) => fp(...args).then(res, rej));
+  (...args: Array<*>) => Future((rej, res) => {
+    fp(...args).then(res, rej);
+  });
 
 export const Futureall = (fs: Array<Future>) : Future => {
   let futuresRemaining = fs.length;
