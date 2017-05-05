@@ -4,6 +4,7 @@ import React from 'react';
 
 import { Input } from './input';
 import { CloseButton } from './closeButton';
+import { List } from './list';
 
 export type CommentType = { id: mixed, comment: string };
 
@@ -19,9 +20,11 @@ export const CommentsPanel = ({comments, addComment, removeComment}) =>
       className="commentsPanel-input"
       onEnter={addComment} placeholder="Comment..."
     />
-    {comments.map(({id, comment}) =>
-      <Comment
-        key={id}
-        comment={comment}
-        onClose={() => removeComment(id)}/>)}
+    <List>
+      {comments.map(({id, comment}) =>
+        <Comment
+          key={id}
+          comment={comment}
+          onClose={() => removeComment(id)}/>)}
+    </List>
   </div>;
