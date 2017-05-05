@@ -8,39 +8,15 @@ export const sideEffect =
      { f(d); return d; };
 export const P2F =
   (p: Promise<*>) : Future =>
-  Future((rej, res) => {
-    p.then(res, rej)
-    .catch(e => console.error("Uncaught here: ", e));
-  });
-export const F2P =
-  (f: Future) : Promise<*> =>
-  new Promise((res, rej) => f.fork(rej, res));
+  Future.fromPromise(() => p, null);
+export const F2P = (f: Future) : Promise<*> => f.promise();
 export const futurize =
   (fp: (mixed => Promise<*>)) =>
   (...args: Array<*>) => Future((rej, res) => {
     fp(...args).then(res, rej);
   });
 
-export const Futureall = (fs: Array<Future>) : Future => {
-  let futuresRemaining = fs.length;
-  if(futuresRemaining === 0)
-    return Future.of([]);
-
-  let results = fs.map(() => undefined);
-
-  return Future((rej, res) => {
-    const childReject = once(rej);
-    const childResolve = i => result => {
-      results[i] = result;
-      futuresRemaining--;
-
-      if(futuresRemaining === 0)
-        res(results);
-    };
-
-    fs.forEach((f, i) => f.fork(childReject, childResolve(i)))
-  });
-};
+export const Futureall = Future.parallel(Infinity);
 
 export const Futurefold =
 (
