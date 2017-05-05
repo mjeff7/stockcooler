@@ -80,7 +80,9 @@ const storeMaker = stateReducer => {
   };
 };
 
-const ConnectedStore = (stateReducer, addr) => Base =>
+const ConnectedStore =
+  (stateReducer, addr, shouldShare = () => true) =>
+  Base =>
   class extends React.Component {
     store = storeMaker(stateReducer);
     hub = webSocketHub(addr, error => this.hub.emit(addToast(
@@ -98,10 +100,15 @@ const ConnectedStore = (stateReducer, addr) => Base =>
       this.setState({store: this.store.getState()});
     };
 
+    dispatch = e =>
+      shouldShare(e)
+      ? this.hub.emit(e)
+      : this.handleEventSelf(e)
+
     render() {
       return <Base {...this.props}
         store={this.state.store}
-        dispatch={this.hub.emit}
+        dispatch={this.dispatch}
       />;
     }
 };
@@ -180,4 +187,20 @@ class DataPrep extends React.Component {
 };
 
 
-export default ConnectedStore(stateReducer, 'ws://localhost:3000/')(DataPrep);
+const eventTypesToShare = new Set(
+  [
+    addSymbol,
+    removeSymbol,
+    addComment,
+    removeCommentById,
+    //addToast,
+    //removeToastById
+  ].map(a => a.type)
+);
+
+
+export default ConnectedStore(
+  stateReducer,
+  'ws://localhost:3000/',
+  e => eventTypesToShare.has(e.type)
+)(DataPrep);
