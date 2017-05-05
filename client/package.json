@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "d3-time-format": "^2.0.5",
+    "fluture": "^5.0.0",
     "ramda-fantasy": "^0.8.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
