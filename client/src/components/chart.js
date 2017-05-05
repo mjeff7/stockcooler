@@ -38,7 +38,7 @@ const ChartInner =
       type="svg"
       data={data}
       seriesName="SPX?"
-      xAccessor={prop('Date')}
+      xAccessor={x => x.Date}
       xScaleProvider={discontinuousTimeScaleProvider}
     >
     <CrossHairCursor stroke="black"/>

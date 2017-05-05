@@ -3,7 +3,17 @@
 // eslint-disable-next-line
 import fetch from 'node-fetch';
 import * as d3 from 'd3-time-format';
-import { Future, Maybe, prop, sortBy, zipObj, zipWith } from './prelude';
+import {
+  Future,
+  Just,
+  Maybe,
+  maybe,
+  Nothing,
+  prop,
+  sortBy,
+  zipObj,
+  zipWith
+} from './prelude';
 import { fileCache, localStorageCache } from './cache';
 // eslint-disable-next-line
 import { futurize, sideEffect } from './utils';
@@ -43,8 +53,8 @@ try {
 historyCache = new Map();
 
 export const getQuoteHistoryNow : string => Maybe = symbol =>
-  historyCache.has(symbol) ? Maybe.Just(historyCache.get(symbol))
-                           : Maybe.Nothing();
+  historyCache.has(symbol) ? Just(historyCache.get(symbol))
+                           : Nothing;
 
 
 // csvToJSON can throw.
@@ -71,10 +81,10 @@ const csvToJSON = (blob : string) => {
 };
 
 export const getQuoteHistory : string => Future<*, QuoteHistory> = symbol =>
-  Maybe.maybe(
+  maybe(
     fetchHistoryFromNetwork(symbol)
     .map(csvToJSON)
-    .map(sortBy(prop('Date')))
+    .map(sortBy(x => x.Date))
     .map(sideEffect(data => historyCache.set(symbol, data)))
     .chainRej(error => Future.reject({
       description: `Cannot load history for symbol ${symbol}`,
