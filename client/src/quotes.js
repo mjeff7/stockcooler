@@ -1,22 +1,17 @@
 // @flow
 
-// eslint-disable-next-line
 import fetch from 'node-fetch';
 import * as d3 from 'd3-time-format';
 import {
-  encase,
   Future,
   Just,
   Maybe,
   maybe_,
   Nothing,
-  prop,
   sortBy,
   zipObj,
   zipWith
 } from './prelude';
-import { fileCache, localStorageCache } from './cache';
-// eslint-disable-next-line
 import { futurize, sideEffect } from './utils';
 
 
@@ -38,20 +33,7 @@ const fetchText = url =>
 const fetchHistoryFromNetwork : string => Future =
   symbol => futurize(fetchText)(data_url(symbol));
 
-import fs from 'fs';
-const MOCK_DIR = 'mock/cache';
-let historyCache;
-try {
-  // eslint-disable-next-line
-  localStorage; // This line will fail on node.
-  console.log("Browser");
-  historyCache = localStorageCache(MOCK_DIR);
-} catch(e) {
-  try { fs.mkdirSync(MOCK_DIR); }
-  catch(e) { if(e.code !== 'EEXIST') throw e; };
-  historyCache = fileCache(MOCK_DIR);
-}
-historyCache = new Map();
+const historyCache = new Map();
 
 export const getQuoteHistoryNow : string => Maybe = symbol =>
   historyCache.has(symbol) ? Just(historyCache.get(symbol))
