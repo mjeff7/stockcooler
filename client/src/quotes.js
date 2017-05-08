@@ -63,18 +63,20 @@ const csvToJSON = (blob : string) => {
   return data;
 };
 
+const fetchAndCacheHistory = (symbol: string): Future<*, QuoteHistory> =>
+  fetchHistoryFromNetwork(symbol)
+  .chain(Future.encase(csvToJSON))
+  .map(sortBy(x => x.Date))
+  .map(sideEffect(data => historyCache.set(symbol, data)))
+  .chainRej(error => Future.reject({
+    description: `Cannot load history for symbol ${symbol}`,
+    error,
+    symbol
+  }));
+
 export const getQuoteHistory : string => Future<*, QuoteHistory> = symbol =>
   maybe_(
-    () => fetchHistoryFromNetwork(symbol)
-    .chain(Future.encase(csvToJSON))
-    .map(sortBy(x => x.Date))
-    .map(sideEffect(data => historyCache.set(symbol, data)))
-    .chainRej(error => Future.reject({
-      description: `Cannot load history for symbol ${symbol}`,
-      error,
-      symbol
-    })),
-
+    () => fetchAndCacheHistory(symbol),
     Future.of,
     getQuoteHistoryNow(symbol)
   );
