@@ -25,16 +25,17 @@ const dispersedSequence = n => {
   return dispersedSequence_(n);
 };
 
-const seq360 = dispersedSequence(360),
+//const seq360 = dispersedSequence(360);
       // Clip the 100 sequence to 25 to 75 and start in the middle.
-      seq100 = dispersedSequence(50).map(i => (i+25) % 50 + 25);
+const seq100 = dispersedSequence(50).map(i => (i+25) % 50 + 25);
+const seqHues = dispersedSequence(6).map(i => i * 360 / 6);
 
 
 export const pickNewColor = alreadyUsed => {
   let newColor;
 
   for(let l of seq100)
-    for(let h of seq360) {
+    for(let h of seqHues) {
       newColor = `hsl(${h}, 50%, ${l}%)`;
       if(!alreadyUsed.includes(newColor))
         return newColor;
