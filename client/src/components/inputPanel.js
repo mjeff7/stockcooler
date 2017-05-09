@@ -35,7 +35,7 @@ const InputPanel =
     <Input
       className="inputPanel-input"
       onEnter={addSymbol}
-      placeholder="Enter a symbol"
+      placeholder="Symbol"
     />
     <List>
       {symbols.map(symbol =>
