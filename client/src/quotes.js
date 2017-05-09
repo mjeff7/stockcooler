@@ -19,7 +19,7 @@ export type QuoteDatum = { Date: Date, Close: number };
 export type QuoteHistory = Array<QuoteDatum>;
 
 const data_url : string => string = symbol =>
-  `http://localhost:3000/history?q=${symbol}`;
+  `http://192.168.1.70:3000/history?q=${symbol}`;
 
 const fetchText = url =>
   fetch(url)

@@ -209,6 +209,6 @@ const eventTypesToShare = new Set(
 
 export default ConnectedStore(
   stateReducer,
-  'ws://localhost:3000/',
+  'ws://192.168.1.70:3000/',
   e => eventTypesToShare.has(e.type)
 )(DataPrep);
