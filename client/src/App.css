@@ -150,10 +150,20 @@
   opacity: 1;
   max-height: 200px;
   border-width: 1px;
-  transition: 1s;
+
+}
+
+.example-enter, .example-leave.example-leave-active,
+.example-leave, .example-enter.example-enter-active {
+  transition: 0.25s;
+  transition-timing-function: ease;
 }
 
 @media (min-width: 700px) {
+  .workspace {
+    justify-content: flex-start;
+  }
+
   .resizer {
     width: calc(100% - 5em);
   }
@@ -168,6 +178,7 @@
 
   .commentsPanel {
     height: 20%;
+    width: calc(100% - 6em);
     overflow: auto;
   }
 }
