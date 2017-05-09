@@ -4,9 +4,7 @@ import React from 'react';
 import * as RS from 'react-stockcharts';
 import { format } from 'd3-format';
 import { timeFormat } from 'd3-time-format';
-import { path,
-         prop
-       } from '../prelude';
+import { path } from '../prelude';
 
 const { ChartCanvas, Chart,
         axes: { XAxis, YAxis },
