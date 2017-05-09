@@ -200,7 +200,9 @@
 
 @media (min-width: 0px) {
   .App {
+    color: #031927;
     background: #EAEFBD;
+    background: #FCF7F8;
   }
 
   .resizer {
