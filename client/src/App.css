@@ -82,6 +82,7 @@
 
 .symbolTag {
   text-align: center;
+  float: left;
 }
 
 .symbolTag-span {
@@ -117,7 +118,7 @@
   border: 1px solid lightgrey;
   border-radius: 5px;
   padding: 5px;
-  margin: 5px 0;
+  margin: 2.5px 0;
 
   text-align: center;
 }
