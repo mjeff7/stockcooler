@@ -2,198 +2,26 @@
 
 import React from 'react';
 import { compose,
-         intersection,
        } from '../prelude';
 import stateReducer from '../reducer';
-import { newDataManager } from '../chartData';
 
-import type { ChartableData } from '../types';
-
-import Resizer from './resizer';
+import resizer from './resizer';
 import GuardedChart from './chart';
 import InputPanel from './inputPanel';
 import { CommentsPanel } from './comment';
 import { ToastsPanel } from './toasts';
+
+import { prepareData } from './prepareData';
+import { connectStore } from './store';
 
 import {
   addSymbol,
   removeSymbol,
   addComment,
   removeCommentById,
-  addToast,
-  removeToastById
+  //addToast,
+  //removeToastById
 } from '../events';
-import type { Event } from '../events';
-
-
-
-
-const Chart = Resizer(GuardedChart);
-
-type Subscriber = Event => void;
-
-const webSocketHub = (addr, errorHandler = () => null) => {
-  const subscribers = new Set();
-  const ws = new WebSocket(addr);
-
-  const subscribe = (subscriber: Subscriber) => {
-    subscribers.add(subscriber);
-    return () => subscribers.delete(subscriber);
-  };
-
-  const emitLocal = (message: Event) => subscribers.forEach(s => s(message));
-  const emit = (message: Event) => {
-    emitLocal(message);
-    if(ws.readyState === WebSocket.OPEN)
-      ws.send(JSON.stringify(message));
-  };
-
-  const emitError = error => {
-    console.error({error});
-    errorHandler(error);
-  };
-
-  ws.addEventListener('message', msg =>
-    typeof msg.data === 'string'
-    ? emitLocal(JSON.parse(msg.data))
-    : emitError({
-        error: 'Received WebSocket message without string data.',
-        message: msg
-    })
-  );
-
-  ws.addEventListener(('error': string), e => emitError({
-    error: 'WebSocket connect error',
-    originalError: e
-  }));
-
-  return {
-    subscribe,
-    emit
-  };
-};
-
-const storeMaker = stateReducer => {
-  let state = stateReducer(undefined, {type: 'INITIAL_STATE'});
-
-  const dispatch = (e: Event) =>
-    state = stateReducer(state, e);
-
-  const getState = () => state;
-
-  return {
-    dispatch,
-    getState
-  };
-};
-
-const ConnectedStore =
-  (stateReducer, addr, shouldShare = () => true) =>
-  Base =>
-  class extends React.Component {
-    store = storeMaker(stateReducer);
-    hub = webSocketHub(addr, error => this.hub.emit(addToast(
-      `Could not connect to a websocket at ${addr}. No collaboration for you.`
-    )));
-    state = { store: this.store.getState() };
-
-    constructor() {
-      super();
-      this.hub.subscribe(this.handleEventSelf);
-    }
-
-    handleEventSelf = (e: Event) => {
-      this.store.dispatch(e);
-      this.setState({store: this.store.getState()});
-    };
-
-    dispatch = (e: Event) =>
-      shouldShare(e)
-      ? this.hub.emit(e)
-      : this.handleEventSelf(e)
-
-    render() {
-      return <Base {...this.props}
-        store={this.state.store}
-        dispatch={this.dispatch}
-      />;
-    }
-};
-
-class DataPrep extends React.Component {
-  state: { preparedData: ChartableData,
-           preparedSymbols: Array<string>
-         };
-
-  state = { preparedData: [],
-            preparedSymbols: []
-          };
-
-  dataManager = newDataManager();
-  desiredSymbols = [];
-
-  componentDidMount() {
-    this.componentWillReceiveProps(this.props);
-  }
-
-  componentWillReceiveProps(props) {
-    this.useSymbols(props.store.symbols);
-  }
-
-  updateSymbols = readySymbols => this.setState({
-    preparedSymbols: intersection(readySymbols, this.desiredSymbols)
-  });
-
-  useSymbols(symbols : Array<string>) {
-    // Store this now so the most recent call will set the result,
-    // regardless of the order in which the retrieval settles.
-    // Only run if the list has changed.
-    if(this.desiredSymbols !== symbols) {
-      this.desiredSymbols = symbols;
-      this.dataManager.incorporateSymbols(symbols, this.updateSymbols)
-      .fork(
-        this.handleRetrievalError,
-        this.updateSymbols
-      );
-    }
-  }
-
-  handleRetrievalError = (error: {symbol?: string}) => {
-    const symbol = error.symbol;
-    console.error({description: 'Failed to fetch data.',
-                   symbol,
-                   error
-                  });
-    this.props.dispatch(addToast(
-      "Oops...I couldn't fetch data" +
-      (symbol ? ` for ${symbol}` : ", and I don't know what symbol it was.")
-    ));
-
-    if(symbol)
-      this.props.dispatch(removeSymbol(symbol));
-  }
-
-  handlerOf = action => compose(this.props.dispatch, action);
-
-  render() {
-    return <div className="workspace">
-      <Chart data={this.dataManager.getData()}
-             symbols={this.state.preparedSymbols}
-             colors={this.props.store.colors}/>
-      <InputPanel addSymbol={this.handlerOf(addSymbol)}
-                  removeSymbol={this.handlerOf(removeSymbol)}
-                  readySymbols={this.state.preparedSymbols}
-                  symbols={this.props.store.symbols}
-                  colors={this.props.store.colors}/>
-      <CommentsPanel comments={this.props.store.comments}
-                     addComment={this.handlerOf(addComment)}
-                     removeComment={this.handlerOf(removeCommentById)}/>
-      <ToastsPanel toasts={this.props.store.toasts}
-                   removeToast={this.handlerOf(removeToastById)}/>
-    </div>;
-  }
-};
-
 
 const eventTypesToShare = new Set(
   [
@@ -207,8 +35,43 @@ const eventTypesToShare = new Set(
 );
 
 
-export default ConnectedStore(
-  stateReducer,
-  'ws://192.168.1.70:3000/',
-  e => eventTypesToShare.has(e.type)
-)(DataPrep);
+const Chart = resizer(GuardedChart);
+Chart.displayName = 'Chart';
+
+const Workspace = ({
+  data, colors,
+
+  symbols, readySymbols,
+  addSymbol, removeSymbol,
+
+  comments,
+  addComment, removeComment,
+
+  toasts,
+  removeToast,
+}) =>
+  <div className="workspace">
+    <Chart data={data}
+           symbols={readySymbols}
+           colors={colors}/>
+    <InputPanel addSymbol={addSymbol}
+                removeSymbol={removeSymbol}
+                readySymbols={readySymbols}
+                symbols={symbols}
+                colors={colors}/>
+    <CommentsPanel comments={comments}
+                   addComment={addComment}
+                   removeComment={removeComment}/>
+    <ToastsPanel toasts={toasts}
+                 removeToast={removeToast}/>
+  </div>;
+
+
+export default compose(
+  connectStore(
+    stateReducer,
+    'ws://192.168.1.70:3000/',
+    e => eventTypesToShare.has(e.type)
+  ),
+  prepareData
+)(Workspace);
