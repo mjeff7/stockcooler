@@ -7,8 +7,10 @@ import { List } from './list';
 
 import type { Color } from '../types';
 
+import spinnerImg from '../spinner.svg';
+
 const WaitSpinner = () =>
-  <span className="spin">(W)</span>;
+  <img className="spin spinner" src={spinnerImg}/>;
 
 const SymbolTag = ({symbol, color, onClick, ready}) =>
   <div

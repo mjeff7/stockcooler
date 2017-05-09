@@ -19,6 +19,15 @@
   animation: App-logo-spin infinite 1s linear;
 }
 
+.spinner {
+  height: 1em;
+  width: 1em;
+}
+
+*:focus {
+  outline: none;
+}
+
 .close {
   margin: 0 5px;
 }
@@ -83,6 +92,10 @@
 .symbolTag {
   text-align: center;
   float: left;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .symbolTag-span {
