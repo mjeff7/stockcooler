@@ -4,7 +4,7 @@ import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 export const List = ({children}) =>
   <CSSTransitionGroup
-    transitionName="example"
+    transitionName="faderList"
     transitionEnterTimeout={250}
     transitionLeaveTimeout={250}
   >
