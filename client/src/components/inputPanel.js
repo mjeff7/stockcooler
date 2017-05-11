@@ -4,13 +4,9 @@ import React from 'react';
 
 import { Input } from './input';
 import { List } from './list';
+import { WaitSpinner } from './waitSpinner';
 
 import type { Color } from '../types';
-
-import spinnerImg from '../spinner.svg';
-
-const WaitSpinner = () =>
-  <img className="spin spinner" src={spinnerImg} alt="Waiting"/>;
 
 const SymbolTag = ({symbol, color, onClick, ready}) =>
   <div
