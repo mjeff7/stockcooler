@@ -54,6 +54,19 @@
   height: 100vh;
 }
 
+.emptyChart {
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+
+  height: 100%;
+  max-width: 50%;
+
+  font-size: 400%;
+  text-align: center;
+  color: hsl(180, 50%, 50%);
+}
+
 .inputPanel-input, .symbolTag,
 .commentsPanel-input, .comment {
   width: 100%;

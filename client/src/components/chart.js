@@ -77,6 +77,11 @@ const ChartInner =
     </Chart>
   </ChartCanvas>;
 
+const EmptyChart = () =>
+  <div className="emptyChart">
+    Nothing here yet. Add a symbol to get started.
+  </div>;
+
 const GuardedChart =
   (props: {data: ChartableData,
            colors: {[string]: Color},
@@ -85,6 +90,6 @@ const GuardedChart =
            symbols: Array<string>}) =>
     props.data.length > 0
     ? <ChartInner {...props}/>
-    : <div>Nothing here...add a symbol.</div>;
+    : <EmptyChart/>;
 
 export default GuardedChart;
