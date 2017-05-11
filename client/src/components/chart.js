@@ -4,6 +4,7 @@ import React from 'react';
 import * as RS from 'react-stockcharts';
 import { format } from 'd3-format';
 import { timeFormat } from 'd3-time-format';
+import { WaitSpinner } from './waitSpinner';
 import { path } from '../prelude';
 
 const { ChartCanvas, Chart,
@@ -22,7 +23,7 @@ import type { ChartableData, Color } from '../types';
 
 const VALUETOPLOT = 'Close';
 const ChartInner =
-  ({colors, data, height, width, symbols} :
+  ({colors, data, height, width, readySymbols: symbols} :
     {data: ChartableData,
      colors: {[string]: Color},
      height: number,
@@ -77,9 +78,14 @@ const ChartInner =
     </Chart>
   </ChartCanvas>;
 
-const EmptyChart = () =>
+const EmptyChart = ({symbols}) =>
   <div className="emptyChart">
-    Nothing here yet. Add a symbol to get started.
+    { symbols.length > 0
+      ? <WaitSpinner className="emptyChart-spinner"/>
+      : <span className="emptyChart-contents">
+          Nothing here yet. Add a symbol to get started.
+        </span>
+    }
   </div>;
 
 const GuardedChart =
@@ -87,9 +93,10 @@ const GuardedChart =
            colors: {[string]: Color},
            height: number,
            width: number,
+           readySymbols: Array<string>,
            symbols: Array<string>}) =>
-    props.data.length > 0
+    props.data.length > 0 && props.readySymbols.length > 0
     ? <ChartInner {...props}/>
-    : <EmptyChart/>;
+    : <EmptyChart {...props}/>;
 
 export default GuardedChart;

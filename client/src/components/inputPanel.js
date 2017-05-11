@@ -16,7 +16,7 @@ const SymbolTag = ({symbol, color, onClick, ready}) =>
   >
     <span className="symbolTag-span">
       {symbol}
-      {ready || <span> <WaitSpinner/></span>}
+      {ready || <span> <WaitSpinner className="symbolTag-spinner"/></span>}
     </span>
   </div>;
 

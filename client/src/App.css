@@ -20,8 +20,8 @@
 }
 
 .spinner {
-  height: 1em;
-  width: 1em;
+  max-height: 100%;
+  max-width: 100%;
 }
 
 *:focus {
@@ -57,14 +57,25 @@
 .emptyChart {
   display: flex;
   margin: 0 auto;
+  justify-content: center;
   align-items: center;
 
   height: 100%;
   max-width: 50%;
 
+  overflow: hidden;
+}
+
+.emptyChart-contents {
   font-size: 400%;
   text-align: center;
   color: hsl(180, 50%, 50%);
+}
+
+.emptyChart-spinner {
+  height: 80%;
+  opacity: 0.1;
+  animation-duration: 2s;
 }
 
 .inputPanel-input, .symbolTag,
@@ -112,6 +123,11 @@
   color: white;
   filter: drop-shadow(0 0 1px black);
   font-weight: 800;
+}
+
+.symbolTag-spinner {
+  height: 1em;
+  width: 1em;
 }
 
 .comment {
