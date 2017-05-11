@@ -47,6 +47,10 @@ export const prepareData = Base => {
       // Only run if the list has changed.
       if(this.desiredSymbols !== symbols) {
         this.desiredSymbols = symbols;
+
+        // This is necessary so that removals while incorporateSymbols is
+        // running will register immediately.
+        this.updateSymbols(this.state.preparedSymbols);
         this.dataManager.incorporateSymbols(symbols, this.updateSymbols)
         .fork(
           this.handleRetrievalError,
