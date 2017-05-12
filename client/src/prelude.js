@@ -1,6 +1,6 @@
 export * from './sanctuary';
 export { Future
-       } from 'fluture';
+       } from 'fluture/es5';
 export { difference,
          intersection,
          once,

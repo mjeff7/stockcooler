@@ -1,5 +1,5 @@
 import $ from 'sanctuary-def';
-import Future from 'fluture';
+import Future from 'fluture/es5';
 import {env, create} from 'sanctuary';
 
 const FutureType = $.BinaryType(
