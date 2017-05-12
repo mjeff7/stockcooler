@@ -33,12 +33,6 @@ const fetchText = url =>
 const fetchHistoryFromNetwork : string => Future =
   symbol => futurize(fetchText)(data_url(symbol));
 
-const historyCache = new Map();
-
-export const getQuoteHistoryNow : string => Maybe = symbol =>
-  historyCache.has(symbol) ? Just(historyCache.get(symbol))
-                           : Nothing;
-
 
 // csvToJSON can throw.
 const csvToJSON = (blob : string) => {
@@ -63,20 +57,33 @@ const csvToJSON = (blob : string) => {
   return data;
 };
 
+const historyCache = new Map();
+const fetchingTickets = new Map();
+
 const fetchAndCacheHistory = (symbol: string): Future<*, QuoteHistory> =>
   fetchHistoryFromNetwork(symbol)
   .chain(Future.encase(csvToJSON))
   .map(sortBy(x => x.Date))
   .map(sideEffect(data => historyCache.set(symbol, data)))
+  .map(sideEffect(() => fetchingTickets.delete(symbol)))
   .chainRej(error => Future.reject({
     description: `Cannot load history for symbol ${symbol}`,
     error,
     symbol
   }));
 
+const listenForSymbolArrival = symbol => {
+  if(!fetchingTickets.has(symbol))
+    fetchingTickets.set(
+      symbol,
+      Future.cache(fetchAndCacheHistory(symbol))
+    );
+
+  return fetchingTickets.get(symbol);
+};
+
+
 export const getQuoteHistory : string => Future<*, QuoteHistory> = symbol =>
-  maybe_(
-    () => fetchAndCacheHistory(symbol),
-    Future.of,
-    getQuoteHistoryNow(symbol)
-  );
+  historyCache.has(symbol)
+  ? Future.of(historyCache.get(symbol))
+  : listenForSymbolArrival(symbol);
