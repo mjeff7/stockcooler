@@ -117,6 +117,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  cursor: pointer;
+}
+
+.symbolTag:hover {
+  filter: brightness(0.8);
 }
 
 .symbolTag-span {
@@ -147,6 +153,14 @@
   opacity: 0.8;
 }
 
+.toast:hover {
+  opacity: 1;
+}
+
+.close, .toastPanel, .symbolTag {
+  transition: 0.15s;
+}
+
 .close {
   float: right;
   margin: 0 5px;
@@ -157,6 +171,10 @@
   cursor: pointer;
 
   opacity: 0.2;
+}
+
+.close:hover {
+  opacity: 0.5;
 }
 
 .symbolTag, .symbolTag.faderList-leave, .symbolTag.faderList-enter.faderList-enter-active {
