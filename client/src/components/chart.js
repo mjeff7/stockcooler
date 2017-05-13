@@ -44,7 +44,7 @@ const ChartInner =
     <Chart
         yExtents={d => symbols.map(s => path([s, VALUETOPLOT], d))}>
       <XAxis axisAt="bottom" orient="bottom"/>
-      <YAxis axisAt="right" orient="right"/>
+      <YAxis axisAt="right" orient="right" zoomEnabled={false}/>
 
       {symbols.map(
         s => [ <LineSeries key={'line_' + s}
