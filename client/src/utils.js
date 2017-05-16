@@ -2,10 +2,21 @@
 
 import { Future, once } from './prelude';
 
+
+export const try_ = (f, errorHandler, defaultResult) => {
+  try {
+    return f();
+  } catch(error) {
+    errorHandler(error);
+    return defaultResult;
+  }
+};
+
 export const sideEffect =
   <A>(f: A => mixed) : (A => A) =>
      (d: A) =>
      { f(d); return d; };
+
 export const P2F =
   (p: Promise<*>) : Future =>
   Future.fromPromise(() => p, null);
