@@ -71,7 +71,7 @@ const Workspace = ({
 export default compose(
   connectStore(
     stateReducer,
-    'ws://192.168.1.70:3000/',
+    `ws://${window.location.host}/`,
     e => eventTypesToShare.has(e.type)
   ),
   prepareData
