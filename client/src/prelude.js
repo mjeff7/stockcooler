@@ -1,7 +1,7 @@
-export * from './sanctuary';
 export { Future
        } from 'fluture/es5';
-export { difference,
+export { compose,
+         difference,
          intersection,
          once,
          path,
