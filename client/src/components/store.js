@@ -5,6 +5,8 @@ import React from 'react';
 import { webSocketHub } from '../websocket';
 import { addToast } from '../events';
 
+import { compose } from '../prelude';
+
 
 const storeMaker = stateReducer => {
   let state = stateReducer(undefined, {type: 'INITIAL_STATE'});
@@ -20,40 +22,66 @@ const storeMaker = stateReducer => {
   };
 };
 
-export const connectStore =
-  (stateReducer, addr, shouldShare = () => true) =>
+const stateComponent =
+  stateReducer =>
   Base => {
-  class ConnectStore extends React.Component {
+  class State extends React.Component {
     store = storeMaker(stateReducer);
-    hub = webSocketHub(addr, error => this.hub.emit(addToast(
-      `Could not connect to a websocket at ${addr}. No collaboration for you.`
-    )));
     state = { store: this.store.getState() };
 
-    constructor() {
-      super();
-      this.hub.subscribe(this.handleEventSelf);
-    }
-
-    handleEventSelf = (e: Event) => {
+    handleEvent = (e: Event) => {
       this.store.dispatch(e);
       this.setState({store: this.store.getState()});
     };
 
-    dispatch = (e: Event) =>
-      shouldShare(e)
-      ? this.hub.emit(e)
-      : this.handleEventSelf(e)
-
     render() {
       return <Base {...this.props}
         store={this.state.store}
+        dispatch={this.handleEvent}
+      />;
+    }
+  }
+
+  State.displayName = `State→${Base.displayName || Base.name}`;
+
+  return State;
+};
+
+const webSocketComponent =
+  (addr, shouldShare = () => true) =>
+  Base => {
+  class WebSocketHOC extends React.Component {
+    componentWillMount() {
+      this.hub = webSocketHub(addr, error => this.props.dispatch(addToast(
+        `Could not connect to a websocket at ${addr}. ` +
+        `No collaboration for you.`
+      )));
+
+      this.hub.subscribe(this.props.dispatch);
+    }
+
+    dispatch = (e: Event) => {
+      this.props.dispatch(e);
+
+      if(shouldShare(e))
+        this.hub.emit(e);
+    };
+
+    render() {
+      return <Base {...this.props}
         dispatch={this.dispatch}
       />;
     }
   }
 
-  ConnectStore.displayName = `ConnectStore→${Base.displayName || Base.name}`;
+  WebSocketHOC.displayName = `WebSocketHOC→${Base.displayName || Base.name}`;
 
-  return ConnectStore;
+  return WebSocketHOC;
 };
+
+export const connectStore =
+  (stateReducer, addr, shouldShare = () => true) =>
+  compose(
+    stateComponent(stateReducer),
+    webSocketComponent(addr, shouldShare)
+  );
