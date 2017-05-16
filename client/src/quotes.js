@@ -1,6 +1,5 @@
 // @flow
 
-import fetch from 'node-fetch';
 import * as d3 from 'd3-time-format';
 import {
   Future,
@@ -19,7 +18,7 @@ export type QuoteDatum = { Date: Date, Close: number };
 export type QuoteHistory = Array<QuoteDatum>;
 
 const data_url : string => string = symbol =>
-  `http://192.168.1.70:3000/history?q=${symbol}`;
+  `/history?q=${symbol}`;
 
 const fetchText = url =>
   fetch(url)
