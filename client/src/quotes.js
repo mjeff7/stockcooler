@@ -38,7 +38,7 @@ const csvToJSON = (blob : string) => {
   const parseDate = d3.timeParse('%-d-%b-%y');
   const LINE_DELIMITER = '\n',
         ITEM_DELIMITER = ',',
-        lines = blob.slice(1).split(LINE_DELIMITER),
+        lines = blob.split(LINE_DELIMITER),
         fields = lines[0].split(ITEM_DELIMITER),
         data = lines
                .slice(1)
