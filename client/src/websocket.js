@@ -1,8 +1,22 @@
 // @flow
 
+import { try_ } from './utils';
+
+
+const deadWebSocket = {
+  readyState: null,
+  send: () => null,
+  addEventListener: () => null
+};
+
 export const webSocketHub = (addr, errorHandler = () => null) => {
+  const emitError = errorHandler;
   const subscribers = new Set();
-  const ws = new WebSocket(addr);
+  const ws = try_(
+    () => new WebSocket(addr),
+    emitError,
+    deadWebSocket
+  );
 
   const subscribe = (subscriber: Subscriber) => {
     subscribers.add(subscriber);
@@ -14,11 +28,6 @@ export const webSocketHub = (addr, errorHandler = () => null) => {
     emitLocal(message);
     if(ws.readyState === WebSocket.OPEN)
       ws.send(JSON.stringify(message));
-  };
-
-  const emitError = error => {
-    console.error({error});
-    errorHandler(error);
   };
 
   ws.addEventListener('message', msg =>
