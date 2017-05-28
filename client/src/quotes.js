@@ -20,7 +20,7 @@ export type QuoteHistory = Array<QuoteDatum>;
 const data_url : string => string = symbol =>
   `/history?q=${symbol}`;
 
-const fetchText = url =>
+const fetchText = (url: string) =>
   fetch(url)
   .then(response => response.ok
                     ? response

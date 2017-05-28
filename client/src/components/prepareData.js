@@ -16,15 +16,13 @@ import {
   removeToastById
 } from '../events';
 
-export const prepareData = Base => {
-  class PrepareData extends React.Component {
-    state: { preparedData: ChartableData,
-             preparedSymbols: Array<string>
-           };
+import type { Action } from '../events';
 
-    state = { preparedData: [],
-              preparedSymbols: []
-            };
+export const prepareData = (Base: *) => {
+  class PrepareData extends React.Component {
+    state: { preparedSymbols: Array<string> };
+
+    state = { preparedSymbols: [] };
 
     dataManager = newDataManager();
     desiredSymbols = [];
@@ -33,11 +31,11 @@ export const prepareData = Base => {
       this.componentWillReceiveProps(this.props);
     }
 
-    componentWillReceiveProps(props) {
+    componentWillReceiveProps(props: {store: {symbols: Array<string>}}) {
       this.useSymbols(props.store.symbols);
     }
 
-    updateSymbols = readySymbols => this.setState({
+    updateSymbols = (readySymbols: Array<string>) => this.setState({
       preparedSymbols: intersection(readySymbols, this.desiredSymbols)
     });
 
@@ -74,7 +72,7 @@ export const prepareData = Base => {
         this.props.dispatch(removeSymbol(symbol));
     }
 
-    handlerOf = action => compose(this.props.dispatch, action);
+    handlerOf = (action: Action<*>) => compose(this.props.dispatch, action);
 
     render() {
       return <Base {...this.props}

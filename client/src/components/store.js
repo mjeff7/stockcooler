@@ -7,6 +7,8 @@ import { addToast } from '../events';
 
 import { compose } from '../prelude';
 
+import type { Event } from '../events';
+
 
 const storeMaker = stateReducer => {
   let state = stateReducer(undefined, {type: 'INITIAL_STATE'});
@@ -51,6 +53,10 @@ const webSocketComponent =
   (addr, shouldShare = () => true) =>
   Base => {
   class WebSocketHOC extends React.Component {
+    hub: {
+      emit: Event => void,
+    };
+
     componentWillMount() {
       this.hub = webSocketHub(addr, error => this.props.dispatch(addToast(
         `Could not connect to a websocket at ${addr}. ` +
@@ -79,8 +85,11 @@ const webSocketComponent =
   return WebSocketHOC;
 };
 
-export const connectStore =
-  (stateReducer, addr, shouldShare = () => true) =>
+export const connectStore = (
+  stateReducer: <A>(A, Event) => A,
+  addr: string,
+  shouldShare: Event => boolean = () => true,
+) =>
   compose(
     stateComponent(stateReducer),
     webSocketComponent(addr, shouldShare)

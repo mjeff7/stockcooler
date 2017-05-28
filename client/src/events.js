@@ -3,7 +3,8 @@
 import type { Color } from './types';
 
 export type EventType
-  = 'ADD_SYMBOL'
+  = 'INITIAL_STATE'
+  | 'ADD_SYMBOL'
   | 'REMOVE_SYMBOL'
   | 'SET_SYMBOL_COLOR'
   | 'ADD_COMMENT'
@@ -13,7 +14,8 @@ export type EventType
   ;
 
 export type Event
-  = { type: 'ADD_SYMBOL', payload: string }
+  = { type: 'INITIAL_STATE' }
+  | { type: 'ADD_SYMBOL', payload: string }
   | { type: 'REMOVE_SYMBOL', payload: string }
   | { type: 'SET_SYMBOL_COLOR', payload: {symbol: string, color: Color} }
   | { type: 'ADD_COMMENT', payload: {id: mixed, comment: mixed} }
@@ -22,7 +24,7 @@ export type Event
   | { type: 'REMOVE_TOAST', payload: mixed }
   ;
 
-type Action<A> = A => Event;
+export type Action<A> = A => Event;
 type ActionMaker<A,B> = (EventType,void | A => B) => Action<A>;
 
 const identity = x => x;

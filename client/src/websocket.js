@@ -1,6 +1,8 @@
 // @flow
 
 import { try_ } from './utils';
+import type { Event } from './events';
+import type { Subscriber } from './types';
 
 
 const deadWebSocket = {
@@ -9,7 +11,10 @@ const deadWebSocket = {
   addEventListener: () => null
 };
 
-export const webSocketHub = (addr, errorHandler = () => null) => {
+export const webSocketHub = (
+  addr: string,
+  errorHandler: mixed => mixed = () => null
+) => {
   const emitError = errorHandler;
   const subscribers = new Set();
   const ws = try_(

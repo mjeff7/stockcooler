@@ -22,14 +22,16 @@ const { ChartCanvas, Chart,
 import type { ChartableData, Color } from '../types';
 
 const VALUETOPLOT = 'Close';
-const ChartInner =
-  ({colors, data, height, width, readySymbols: symbols} :
-    {data: ChartableData,
-     colors: {[string]: Color},
-     height: number,
-     width: number,
-     symbols: Array<string>}) =>
-  <ChartCanvas
+const ChartInner = (
+  {colors, data, height, width, readySymbols: symbols}: {
+    data: ChartableData,
+    colors: {[string]: Color},
+    height: number,
+    width: number,
+    readySymbols: Array<string>,
+    symbols: Array<string>,
+  }
+) => <ChartCanvas
       ratio={1}
       width={width}
       height={height}

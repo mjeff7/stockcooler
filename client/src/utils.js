@@ -3,7 +3,11 @@
 import { Future, once } from './prelude';
 
 
-export const try_ = (f, errorHandler, defaultResult) => {
+export const try_ = <A>(
+  f: void => A,
+  errorHandler: Error => mixed,
+  defaultResult: A,
+): A => {
   try {
     return f();
   } catch(error) {
@@ -21,8 +25,7 @@ export const P2F =
   (p: Promise<*>) : Future =>
   Future.fromPromise(() => p, null);
 export const F2P = (f: Future) : Promise<*> => f.promise();
-export const futurize =
-  (fp: (mixed => Promise<*>)) =>
+export const futurize = <A>(fp: (A => Promise<*>)) =>
   (...args: Array<*>) => Future((rej, res) => {
     fp(...args).then(res, rej);
   });
