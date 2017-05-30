@@ -1,7 +1,10 @@
 env:
   browser: true
   es6: true
-extends: 'eslint:all'
+extends:
+  - 'eslint:all'
+  - 'plugin:import/errors'
+  - plugin:import/warnings
 parser: babel-eslint
 parserOptions:
   ecmaFeatures:
@@ -109,6 +112,8 @@ rules:
     - allow:
       - warn
       - error
+  no-duplicate-imports:
+    - off
   linebreak-style:
     - error
     - unix
