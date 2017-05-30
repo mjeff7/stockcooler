@@ -1,17 +1,16 @@
 // @flow
 
-import React from 'react';
-
+import type { Color } from '../types';
 import { Input } from './input';
 import { List } from './list';
+import React from 'react';
 import { WaitSpinner } from './waitSpinner';
 
-import type { Color } from '../types';
 
 const SymbolTag = ({symbol, color, onClick, ready}) =>
   <div
     className="symbolTag"
-    style={{color, backgroundColor: color}}
+    style={{backgroundColor: color, color}}
     onClick={onClick}
   >
     <span className="symbolTag-span">
@@ -20,13 +19,17 @@ const SymbolTag = ({symbol, color, onClick, ready}) =>
     </span>
   </div>;
 
-const InputPanel =
-  ({addSymbol, colors, removeSymbol, readySymbols, symbols}
-    : {addSymbol: string => void,
-       colors: {[string]: Color},
-       removeSymbol: string => void,
-       readySymbols : Array<string>,
-       symbols : Array<string>}) =>
+type InputPanelProps = {
+  addSymbol: string => void,
+  colors: {[string]: Color},
+  removeSymbol: string => void,
+  readySymbols : Array<string>,
+  symbols : Array<string>
+};
+
+const InputPanel = (
+  {addSymbol, colors, removeSymbol, readySymbols, symbols} : InputPanelProps
+) =>
   <div className="inputPanel">
     <Input
       className="inputPanel-input"

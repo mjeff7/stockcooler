@@ -1,29 +1,32 @@
 // @flow
 
-import React from 'react';
-
-import { Input } from './input';
 import { CloseButton } from './closeButton';
+import { Input } from './input';
 import { List } from './list';
+import React from 'react';
 
 export type CommentType = { id: mixed, comment: string };
 
-export const Comment =
-  ({comment, onClose}:
-    {comment: string,
-     onClose: () => void}
-  ) =>
+type CommentProps = {
+  comment: string,
+  onClose: () => void
+};
+
+export const Comment = ({comment, onClose}: CommentProps) =>
   <div className="comment">
     <span>{comment}</span>
     <CloseButton onClose={onClose}/>
   </div>;
 
-export const CommentsPanel =
-  ({comments, addComment, removeComment}: {
-    comments: Array<CommentType>,
-    addComment: string => void,
-    removeComment: mixed => void}
-  ) =>
+type CommentsPanelProps = {
+  comments: Array<CommentType>,
+  addComment: string => void,
+  removeComment: mixed => void
+};
+
+export const CommentsPanel = (
+  {comments, addComment, removeComment}: CommentsPanelProps
+) =>
   <div className="commentsPanel">
     <Input
       className="commentsPanel-input"

@@ -1,46 +1,52 @@
 // @flow
 
-import React from 'react';
-import { compose,
-       } from '../prelude';
-import stateReducer from '../reducer';
-
-import resizer from './resizer';
+import { CommentsPanel } from './comment';
 import GuardedChart from './chart';
 import InputPanel from './inputPanel';
-import { CommentsPanel } from './comment';
+import React from 'react';
 import { ToastsPanel } from './toasts';
-
-import { prepareData } from './prepareData';
+import { compose } from '../prelude';
 import { connectStore } from './store';
+import { prepareData } from './prepareData';
+// Bug in eslint incorrectly believes this is being exported.
+// eslint-disable-next-line import/no-named-as-default
+import resizer from './resizer';
+// Bug in eslint incorrectly believes this is being exported.
+// eslint-disable-next-line import/no-named-as-default
+import stateReducer from '../reducer';
+
 
 import {
-  addSymbol,
-  removeSymbol,
   addComment,
+  addSymbol,
   removeCommentById,
-  //addToast,
-  //removeToastById
+  removeSymbol,
+  // Exclude:
+  //   addToast,
+  //   removeToastById
 } from '../events';
 
 const eventTypesToShare = new Set(
   [
-    addSymbol,
-    removeSymbol,
     addComment,
+    addSymbol,
     removeCommentById,
-    //addToast,
-    //removeToastById
+    removeSymbol,
+    // Exclude:
+    //   addToast,
+    //   removeToastById
   ].map(a => a.type)
 );
 
 
 const Chart = resizer(GuardedChart);
+
 Chart.displayName = 'Chart';
 
 const Workspace = ({
   data, colors,
 
+  /* eslint-disable no-shadow */
   symbols, readySymbols,
   addSymbol, removeSymbol,
 
@@ -51,20 +57,28 @@ const Workspace = ({
   removeToast,
 }) =>
   <div className="workspace">
-    <Chart data={data}
-           symbols={symbols}
-           readySymbols={readySymbols}
-           colors={colors}/>
-    <InputPanel addSymbol={addSymbol}
-                removeSymbol={removeSymbol}
-                readySymbols={readySymbols}
-                symbols={symbols}
-                colors={colors}/>
-    <CommentsPanel comments={comments}
-                   addComment={addComment}
-                   removeComment={removeComment}/>
-    <ToastsPanel toasts={toasts}
-                 removeToast={removeToast}/>
+    <Chart
+      data={data}
+      symbols={symbols}
+      readySymbols={readySymbols}
+      colors={colors}
+    />
+    <InputPanel
+      addSymbol={addSymbol}
+      removeSymbol={removeSymbol}
+      readySymbols={readySymbols}
+      symbols={symbols}
+      colors={colors}
+    />
+    <CommentsPanel
+      comments={comments}
+      addComment={addComment}
+      removeComment={removeComment}
+    />
+    <ToastsPanel
+      toasts={toasts}
+      removeToast={removeToast}
+    />
   </div>;
 
 

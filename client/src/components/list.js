@@ -1,5 +1,5 @@
-import React from 'react';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import React from 'react';
 
 
 export const List = ({children}) =>

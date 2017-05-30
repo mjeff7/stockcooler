@@ -1,22 +1,23 @@
 // @flow
 
+import type { Action } from '../events';
 import React from 'react';
-
-import { compose,
-         intersection,
-       } from '../prelude';
 import { newDataManager } from '../chartData';
 
 import {
-  addSymbol,
-  removeSymbol,
   addComment,
-  removeCommentById,
+  addSymbol,
   addToast,
-  removeToastById
+  removeCommentById,
+  removeSymbol,
+  removeToastById,
 } from '../events';
 
-import type { Action } from '../events';
+import {
+  compose,
+  intersection,
+} from '../prelude';
+
 
 export const prepareData = (Base: *) => {
   class PrepareData extends React.Component {
@@ -35,9 +36,9 @@ export const prepareData = (Base: *) => {
       this.useSymbols(props.store.symbols);
     }
 
-    updateSymbols = (readySymbols: Array<string>) => this.setState({
-      preparedSymbols: intersection(readySymbols, this.desiredSymbols)
-    });
+    updateSymbols = (readySymbols: Array<string>) => this.setState(
+      {preparedSymbols: intersection(readySymbols, this.desiredSymbols)}
+    );
 
     useSymbols(symbols : Array<string>) {
       // Store this now so the most recent call will set the result,
@@ -58,18 +59,23 @@ export const prepareData = (Base: *) => {
     }
 
     handleRetrievalError = (error: {symbol?: string}) => {
-      const symbol = error.symbol;
-      console.error({description: 'Failed to fetch data.',
-                     symbol,
-                     error
-                    });
+      const { symbol } = error;
+
+      console.error({
+        description: 'Failed to fetch data.',
+        error,
+        symbol,
+      });
       this.props.dispatch(addToast(
-        "Oops...I couldn't fetch data" +
-        (symbol ? ` for ${symbol}` : ", and I don't know what symbol it was.")
+        // eslint-disable-next-line prefer-template
+        'Oops...I couldn\'t fetch data' + (
+          symbol
+          ? ` for ${symbol}`
+          : ', and I don\'t know what symbol it was.'
+        )
       ));
 
-      if(symbol)
-        this.props.dispatch(removeSymbol(symbol));
+      if(symbol) this.props.dispatch(removeSymbol(symbol));
     }
 
     handlerOf = (action: Action<*>) => compose(this.props.dispatch, action);

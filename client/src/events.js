@@ -25,13 +25,15 @@ export type Event
   ;
 
 export type Action<A> = A => Event;
-type ActionMaker<A,B> = (EventType,void | A => B) => Action<A>;
 
 const identity = x => x;
-const makeActionMaker: ActionMaker<*,*> = (type, payloadTransformer = identity) => {
-  const action: any => any = input => ({
+const makeActionMaker = (
+  type: EventType,
+  payloadTransformer = identity
+) => {
+  const action = (input: *): Event => ({
+    payload: payloadTransformer(input),
     type,
-    payload: payloadTransformer(input)
   });
 
   action.type = type;
@@ -39,14 +41,15 @@ const makeActionMaker: ActionMaker<*,*> = (type, payloadTransformer = identity) 
   return action;
 };
 
+const normalizeSymbol = (x: string) => x.toUpperCase();
 
-export const
-  addSymbol = makeActionMaker('ADD_SYMBOL', x => x.toUpperCase()),
-  removeSymbol = makeActionMaker('REMOVE_SYMBOL', x => x.toUpperCase()),
-  setSymbolColor = makeActionMaker('SET_SYMBOL_COLOR',
-    (symbol, color) => ({symbol, color})),
-  addComment = makeActionMaker('ADD_COMMENT', x => ({id: x, comment: x})),
-  removeCommentById = makeActionMaker('REMOVE_COMMENT'),
-  addToast = makeActionMaker('ADD_TOAST', x => ({id: x, message: x})),
-  removeToastById = makeActionMaker('REMOVE_TOAST')
-;
+export const addSymbol = makeActionMaker('ADD_SYMBOL', normalizeSymbol);
+export const removeSymbol = makeActionMaker('REMOVE_SYMBOL', normalizeSymbol);
+export const setSymbolColor =
+  makeActionMaker('SET_SYMBOL_COLOR', (symbol, color) => ({color, symbol}));
+export const addComment =
+  makeActionMaker('ADD_COMMENT', x => ({comment: x, id: x}));
+export const removeCommentById = makeActionMaker('REMOVE_COMMENT');
+export const addToast =
+  makeActionMaker('ADD_TOAST', x => ({id: x, message: x}));
+export const removeToastById = makeActionMaker('REMOVE_TOAST');

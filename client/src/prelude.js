@@ -1,4 +1,4 @@
-export { Future
+export { Future,
        } from 'fluture/es5';
 export { compose,
          difference,
@@ -9,6 +9,6 @@ export { compose,
          uniq,
          zip,
          zipObj,
-         zipWith
+         zipWith,
        } from 'ramda';
-export { Futureall } from './utils';
+export { futureAll } from './utils';

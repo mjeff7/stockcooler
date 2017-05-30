@@ -1,7 +1,7 @@
 import { Future } from './prelude';
 import {
   F2P, P2F, futurize,
-  Futureall, Futurefold, sideEffect
+  Futureall, futureFold, sideEffect
 } from './utils';
 
 
@@ -114,18 +114,18 @@ describe('Futureall', () => {
   });
 });
 
-describe('Futurefold', () => {
+describe('futureFold', () => {
   it('should resolve to final accumulator', () => {
     const PAYLOAD = [1,2,3];
     return F2P(
-      Futurefold((sum, i, v) => sum+1, 0, PAYLOAD.map(i => Future.of(i)) )
+      futureFold((sum, i, v) => sum+1, 0, PAYLOAD.map(i => Future.of(i)) )
     )
     .then(r => expect(r).toEqual(PAYLOAD.length));
   });
   it('should reject when any single future rejects', () => {
     const PAYLOAD = [1,2,3];
     return F2P(
-      Futurefold(
+      futureFold(
         () => null, null,
         PAYLOAD.map(i => i === 2 ? Future.reject(i) : Future.of(i))
       )
@@ -139,8 +139,8 @@ describe('Futurefold', () => {
       expect(shouldRun).toBe(true);
       res(true);
     });
-    Futurefold(() => null, null, [b(true)]).fork(x=>x, x=>x);
-    Futurefold(() => null, null, [b(false)]);
+    futureFold(() => null, null, [b(true)]).fork(x=>x, x=>x);
+    futureFold(() => null, null, [b(false)]);
   });
   it('should invoke accumulator in order of resolution', () => {
     const unordered = [3, 1, 2];
@@ -150,7 +150,7 @@ describe('Futurefold', () => {
       Future((rej, res) => resolvers[i] = () => res(i))
     );
     const foldedFuture = F2P(
-      Futurefold(
+      futureFold(
         (a, i, v) => a.concat([v]), [],
         futures
       )

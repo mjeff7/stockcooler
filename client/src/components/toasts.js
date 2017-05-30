@@ -1,9 +1,8 @@
-import React from 'react';
-
 import { CloseButton } from './closeButton';
 import { List } from './list';
+import React from 'react';
 
-const Toast = ({id, toast: {message}, onClose}) =>
+const Toast = ({toast: {message}, onClose}) =>
   <div className="toast">
     <span>{message}</span>
     <CloseButton onClose={onClose}/>
@@ -12,7 +11,7 @@ const Toast = ({id, toast: {message}, onClose}) =>
 export const ToastsPanel = ({toasts, removeToast}) =>
   <div className="toastsPanel">
     <List>
-      {toasts.map((toast, i) =>
+      {toasts.map(toast =>
         <Toast
           key={toast.id}
           toast={toast}

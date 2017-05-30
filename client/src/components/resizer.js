@@ -1,5 +1,5 @@
-import React from 'react';
 import Measure from 'react-measure';
+import React from 'react';
 
 export const resizer = Base => {
   const Resizer = props =>

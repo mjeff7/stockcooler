@@ -1,6 +1,6 @@
 import $ from 'sanctuary-def';
 import Future from 'fluture/es5';
-import {env, create} from 'sanctuary';
+import {create, env} from 'sanctuary';
 
 const FutureType = $.BinaryType(
     Future.name,
@@ -12,4 +12,5 @@ const FutureType = $.BinaryType(
 
 const S = create({checkTypes: true, env: env.concat([FutureType])});
 
+/* eslint-env node */
 module.exports = S;
