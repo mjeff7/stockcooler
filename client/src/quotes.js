@@ -14,7 +14,7 @@ export type QuoteDatum = { Date: Date, Close: number };
 export type QuoteHistory = Array<QuoteDatum>;
 
 const dataURL = (symbol: string) =>
-  `/history?q=${symbol}`;
+  `history?q=${symbol}`;
 
 const fetchText = (url: string) =>
   fetch(url)
