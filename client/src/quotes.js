@@ -30,8 +30,8 @@ const fetchText = (url: string) =>
   )
   .then(r => r.text());
 
-const fetchHistoryFromNetwork : string => Future =
-  symbol => futurize(fetchText)(dataURL(symbol));
+const fetchHistoryFromNetwork = (symbol: string) =>
+  futurize(fetchText)(dataURL(symbol));
 
 // eslint-disable-next-line no-magic-numbers
 const isNotEmpty = x => x.length > 0;
@@ -95,7 +95,7 @@ const listenForSymbolArrival = symbol => {
 // the serializable result and so could potentially persist to disk or
 // localStorage while fetchingTickets (via listenForSymbolArrival) is always
 // in memory since it stores non-serializable Futures.
-export const getQuoteHistory : string => Future<*, QuoteHistory> = symbol =>
+export const getQuoteHistory = (symbol: string) =>
   historyCache.has(symbol)
   ? Future.of(historyCache.get(symbol))
   : listenForSymbolArrival(symbol);
