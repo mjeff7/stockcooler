@@ -13,8 +13,7 @@ import { futurize, sideEffect } from './utils';
 export type QuoteDatum = { Date: Date, Close: number };
 export type QuoteHistory = Array<QuoteDatum>;
 
-const dataURL = (symbol: string) =>
-  `history?q=${symbol}`;
+const dataURL = (symbol: string) => `history?q=${symbol}`;
 
 const fetchText = (url: string) =>
   fetch(url)
@@ -30,6 +29,7 @@ const fetchText = (url: string) =>
     )
   )
   .then(r => r.text());
+
 const fetchHistoryFromNetwork : string => Future =
   symbol => futurize(fetchText)(dataURL(symbol));
 
@@ -91,6 +91,10 @@ const listenForSymbolArrival = symbol => {
 };
 
 
+// Function getQuoteHistory uses two levels of cache. historyCache stores
+// the serializable result and so could potentially persist to disk or
+// localStorage while fetchingTickets (via listenForSymbolArrival) is always
+// in memory since it stores non-serializable Futures.
 export const getQuoteHistory : string => Future<*, QuoteHistory> = symbol =>
   historyCache.has(symbol)
   ? Future.of(historyCache.get(symbol))
