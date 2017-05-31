@@ -58,4 +58,5 @@ module.exports = (req: {query: {q: string}},
     res.status(error.response.status);
     return JSON.stringify(error);
   })
+  .then(sideEffect(() => res.set('Content-Type', 'text/csv')))
   .then(x => res.end(x));
