@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var echoHistory = require('./echoHistory');
 var compression = require('compression');
+var websocket = require('./websocket');
 
 var app = express();
 
@@ -41,4 +42,7 @@ app.use(function(err, req, res, next) {
   res.end('error');
 });
 
-module.exports = app;
+module.exports = ({ server }) => {
+  websocket(server);
+  return app;
+};
