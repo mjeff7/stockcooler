@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=test nodemon --exec babel-node ./bin/www"
+    "start": "NODE_ENV=test nodemon --exec babel-node ./bin/www",
+    "install": "cd client && npm install",
+    "build": "cd client && npm run build"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
