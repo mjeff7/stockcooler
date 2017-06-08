@@ -1,5 +1,5 @@
 import WebSocket from 'ws';
-import stateReducer from './client/reducer';
+import stateReducer from './client/dist/reducer';
 
 
 // Webpack dev server uses websockets and interferes with the messages.
