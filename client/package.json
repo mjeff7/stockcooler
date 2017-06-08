@@ -90,6 +90,9 @@
       "es2017",
       "react-app",
       "flow"
+    ],
+    "plugins": [
+      "transform-runtime"
     ]
   },
   "eslintConfig": {
