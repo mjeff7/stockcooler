@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "start": "NODE_ENV=test nodemon --exec babel-node ./bin/www",
-    "install": "cd client && npm install",
+    "install": "cd client && yarn install",
     "debabel:server": "rm -rf dist && babel --ignore=client -d dist src && cd dist && ln -s ../client",
     "debabel:client": "cd client && babel -d dist src",
-    "debabel": "npm run debabel:client && npm run debabel:server",
-    "build": "npm run debabel && cd client && npm run build"
+    "debabel": "yarn run debabel:client && yarn run debabel:server",
+    "build": "yarn run debabel && cd client && yarn run build"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
