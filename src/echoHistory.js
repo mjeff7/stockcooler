@@ -7,7 +7,7 @@ import { fileCache } from './cache';
 
 
 const data_url : string => string = symbol =>
-  'http://www.google.com/finance/historical' +
+  'http://finance.google.com/finance/historical' +
   `?q=${symbol}&startdate=1970-01-01&output=csv`;
 
 const fetchText = symbol =>
