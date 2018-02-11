@@ -1,8 +1,8 @@
-# fcc-dynamicwebapps-stock
+# Stock Cooler (fcc-dynamicwebapps-stock)
 
 Plot historical quotes of stock symbols interactively and collaboratively. Visitors who come to this app will see the same symbols and share comments with each other. Try it live [here](http://fcc-project-platform.herokuapp.com/stock/).
 
-This project is part of FreeCodeCamp curriculuma and completes the [*Chart the Stock Market* project](https://www.freecodecamp.com/challenges/chart-the-stock-market).
+This project is part of FreeCodeCamp curriculum and completes the [*Chart the Stock Market* project](https://www.freecodecamp.com/challenges/chart-the-stock-market).
 
 ## Project layout
 
