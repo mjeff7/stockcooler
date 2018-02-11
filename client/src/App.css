@@ -1,0 +1,258 @@
+.App {
+  box-sizing: border-box;
+  padding: 0.5rem;
+  height: 100vh;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  display: inline-block;
+  animation: App-logo-spin infinite 1s linear;
+}
+
+.spinner {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+*:focus {
+  outline: none;
+}
+
+.workspace {
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.resizer, .inputPanel, .commentsPanel {
+  display: inline-block;
+  overflow: auto;
+}
+
+.resizer, .inputPanel, .commentsPanel {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.resizer {
+  height: 100vh;
+}
+
+.emptyChart {
+  display: flex;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+
+  height: 100%;
+  max-width: 50%;
+
+  overflow: hidden;
+}
+
+.emptyChart-contents {
+  font-size: 400%;
+  text-align: center;
+  color: hsl(180, 50%, 50%);
+}
+
+.emptyChart-spinner {
+  height: 80%;
+  opacity: 0.1;
+  animation-duration: 2s;
+}
+
+.inputPanel-input, .symbolTag,
+.commentsPanel-input, .comment {
+  width: 100%;
+}
+
+.inputPanel-input, .symbolTag,
+.commentsPanel-input, .comment,
+.toast {
+  box-sizing: border-box;
+  margin: 0.25rem 0;
+
+  border-radius: 0.5rem;
+}
+
+.symbolTag, .comment, .toast,
+.inputPanel-input, .commentsPanel-input {
+  padding: 0.25rem;
+}
+
+.inputPanel-input, .commentsPanel-input, .comment {
+  border: 1px solid lightgrey;
+}
+
+.inputPanel-input, .commentsPanel-input {
+  font-size: inherit;
+}
+
+.inputPanel-input {
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.symbolTag {
+  text-align: center;
+  float: left;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.symbolTag:hover {
+  filter: brightness(0.8);
+}
+
+.symbolTag-span {
+  color: white;
+  filter: drop-shadow(0 0 1px black);
+  font-weight: 800;
+}
+
+.symbolTag-spinner {
+  height: 1em;
+  width: 1em;
+}
+
+.comment {
+  background: white;
+}
+
+.toastsPanel {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+
+  z-index: 7;
+}
+
+.toast {
+  background: grey;
+  opacity: 0.8;
+}
+
+.toast:hover {
+  opacity: 1;
+}
+
+.close, .toastPanel, .symbolTag {
+  transition: 0.15s;
+}
+
+.close {
+  float: right;
+  margin: 0 5px;
+  font-size: 125%;
+  font-weight: bold;
+  line-height: 1;
+
+  cursor: pointer;
+
+  opacity: 0.2;
+}
+
+.close:hover {
+  opacity: 0.5;
+}
+
+.symbolTag, .symbolTag.faderList-leave, .symbolTag.faderList-enter.faderList-enter-active {
+  border-radius: 5px;
+  padding: 5px;
+  margin: 2.5px 0;
+
+  text-align: center;
+}
+
+.comment, .comment.faderList-leave, .comment.faderList-enter.faderList-enter-active {
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px 0;
+}
+
+.toast, .toast.faderList-leave, .toast.faderList-enter.faderList-enter-active {
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px 0;
+}
+
+.faderList-enter, .faderList-leave.faderList-leave-active {
+  overflow: hidden;
+  opacity: 0;
+  max-height: 0px;
+  padding: 0;
+  margin: 0;
+  border-width: 0px;
+}
+
+.faderList-leave, .faderList-enter.faderList-enter-active {
+  opacity: 1;
+  max-height: 200px;
+  border-width: 1px;
+
+}
+
+.faderList-enter, .faderList-leave.faderList-leave-active,
+.faderList-leave, .faderList-enter.faderList-enter-active {
+  transition: 0.25s;
+  transition-timing-function: ease;
+}
+
+@media (min-width: 700px) {
+  .workspace {
+    justify-content: flex-start;
+  }
+
+  .resizer {
+    width: calc(100% - 5em);
+  }
+
+  .inputPanel {
+    width: 5em;
+  }
+
+  .resizer, .inputPanel {
+    height: 80%;
+  }
+
+  .commentsPanel {
+    height: 20%;
+    width: calc(100% - 6em);
+    overflow: auto;
+  }
+}
+
+@media (min-width: 0px) {
+  .App {
+    color: #031927;
+    background: #EAEFBD;
+    background: #FCF7F8;
+  }
+
+  .resizer {
+    border-radius: 1rem;
+  }
+}

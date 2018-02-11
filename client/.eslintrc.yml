@@ -1,0 +1,125 @@
+env:
+  browser: true
+  es6: true
+extends:
+  - 'eslint:all'
+  - 'plugin:import/errors'
+  - plugin:import/warnings
+parser: babel-eslint
+parserOptions:
+  ecmaFeatures:
+    experimentalObjectRestSpread: true
+    jsx: true
+  sourceType: module
+plugins:
+  - react
+  - flowtype
+rules:
+  react/jsx-uses-react:
+    - error
+  react/jsx-uses-vars:
+    - error
+  object-curly-spacing:
+    - off
+  sort-imports:
+    - error
+    - memberSyntaxSortOrder:
+      - all
+      - single
+      - multiple
+      - none
+  space-before-function-paren:
+    - error
+    - never
+  one-var:
+    - error
+    - never
+  padded-blocks:
+    - error
+    - never
+  quote-props:
+    - error
+    - as-needed
+  arrow-parens:
+    - error
+    - as-needed
+  no-sync:
+    - off
+  id-length:
+    - off
+  keyword-spacing:
+    - error
+    - overrides:
+        catch:
+          after: false
+        for:
+          after: false
+        if:
+          after: false
+        switch:
+          after: false
+  indent:
+    - error
+    - 2
+    - SwitchCase: 1
+  comma-dangle:
+    - error
+    - always-multiline
+  capitalized-comments:
+    - error
+    - always
+    - ignoreConsecutiveComments: true
+  curly:
+    - error
+    - multi-line
+    - consistent
+  dot-location:
+    - error
+    - property
+  no-underscore-dangle:
+    - off
+  multiline-ternary:
+    - off
+  no-ternary:
+    - off
+  no-mixed-operators:
+    # This is currently documented on the ESLint website in a way that is
+    # not clear to me. Disable for now.
+    - off
+  object-property-newline:
+    - error
+    - allowMultiplePropertiesPerLine: true
+  sort-keys:
+    # Consider turning this off. Sometimes I want certain keys like
+    # id or key to be at the front.
+    - error
+  no-confusing-arrow:
+    - off
+  new-cap:
+    - off
+  no-void:
+    - off
+  object-curly-newline:
+    - error
+    - multiline: true
+  no-invalid-this:
+    # This appears not to work well, as it flags as invalid immediately
+    # executed statements in classes, i.e. those not in methods or a
+    # constructor, even though using this in those places *appears* to work.
+    - off
+  no-console:
+    - error
+    - allow:
+      - warn
+      - error
+  no-duplicate-imports:
+    - off
+  linebreak-style:
+    - error
+    - unix
+  quotes:
+    - error
+    - single
+  semi:
+    - error
+    - always
